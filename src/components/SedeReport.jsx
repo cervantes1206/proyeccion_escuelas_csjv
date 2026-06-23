@@ -2,6 +2,9 @@ import { sedeStats } from '../utils/projection';
 import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
 import { exportSedeReport } from '../utils/exportExcel';
 import ExportButton from './ExportButton';
+import { lazy, Suspense } from 'react';
+
+const ChartsSede = lazy(() => import('./ChartsSede'));
 
 const SCHOOL_COLORS = {
   Preschool: '#7c3aed',
@@ -48,6 +51,10 @@ export default function SedeReport({ currentSede, projectedSede, currentYear, pr
           <span className="card-value">{diff >= 0 ? '+' : ''}{diff}</span>
         </div>
       </div>
+
+      <Suspense fallback={<div className="charts-loading">Cargando gráficas…</div>}>
+        <ChartsSede currentSede={currentSede} projectedSede={projectedSede} currentYear={currentYear} projectedYear={projectedYear} />
+      </Suspense>
 
       {Object.entries(GRADES_BY_SCHOOL).map(([schoolType, grades]) => {
         const color = SCHOOL_COLORS[schoolType];

@@ -2,6 +2,9 @@ import { aggregateBySchool, grandTotal } from '../utils/projection';
 import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
 import { exportGeneralReport } from '../utils/exportExcel';
 import ExportButton from './ExportButton';
+import { lazy, Suspense } from 'react';
+
+const ChartsGeneral = lazy(() => import('./ChartsGeneral'));
 
 const SCHOOL_COLORS = {
   Preschool: '#7c3aed',
@@ -51,6 +54,10 @@ export default function GeneralReport({ currentSedes, projectedSedes, currentYea
           <span className="card-value">{currentSedes.length}</span>
         </div>
       </div>
+
+      <Suspense fallback={<div className="charts-loading">Cargando gráficas…</div>}>
+        <ChartsGeneral currentSedes={currentSedes} projectedSedes={projectedSedes} currentYear={currentYear} projectedYear={projectedYear} />
+      </Suspense>
 
       {Object.entries(GRADES_BY_SCHOOL).map(([schoolType, grades]) => {
         const color = SCHOOL_COLORS[schoolType];
