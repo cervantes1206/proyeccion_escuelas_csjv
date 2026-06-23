@@ -1,16 +1,50 @@
-# React + Vite
+# Proyección Escolar CSJV
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplicación web para proyectar la matrícula escolar del año siguiente, con informes por sede, por escuela y general.
 
-Currently, two official plugins are available:
+## Estructura de escuelas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Escuela | Grados |
+|---|---|
+| Preschool | K4, K5, K6 |
+| Elementary | 1°, 2°, 3° |
+| Middle | 4°, 5° |
+| Upper Middle | 6°, 7°, 8° |
+| High | 9°, 10°, 11° |
 
-## React Compiler
+## Lógica de proyección
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Cada grado avanza automáticamente al siguiente año lectivo.
+- **Grados que cambian de escuela:** K6 → Elementary, 3° → Middle, 5° → Upper Middle, 8° → High.
+- **Grado 11°** egresa del sistema (no se proyecta).
+- **Nuevos estudiantes** ingresan en K4 con un máximo de 25 por grupo.
+- Los grupos se calculan automáticamente distribuyendo el total entre grupos de máximo 25 estudiantes.
 
-## Expanding the Oxlint configuration
+## Vistas disponibles
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+1. **Ingreso de Datos** — Registra estudiantes por grupo para cada grado y sede. Permite agregar múltiples grupos por grado y múltiples sedes.
+2. **Informe por Sede** — Comparativo lado a lado entre la matrícula actual y la proyectada para una sede seleccionada.
+3. **Informe por Escuela** — Vista de todas las sedes con sus escuelas actuales y proyectadas.
+4. **Informe General** — Tabla consolidada de todas las sedes con variaciones (+ / −) por grado y tipo de escuela.
+
+## Instalación y uso
+
+```bash
+npm install
+npm run dev
+```
+
+Abrir en el navegador: `http://localhost:5173`
+
+### Build para producción
+
+```bash
+npm run build
+npm run preview
+```
+
+## Stack tecnológico
+
+- **React 19** — Interfaz de usuario
+- **Vite 8** — Bundler y servidor de desarrollo
+- **CSS puro** — Sin dependencias de UI externas
