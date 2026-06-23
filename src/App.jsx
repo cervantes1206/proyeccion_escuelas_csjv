@@ -14,15 +14,19 @@ const PROJECTED_YEAR = CURRENT_YEAR + 1;
 
 export default function App() {
   const [sedes, setSedes] = useState(SEDES_2026);
-  const [newK4Students, setNewK4Students] = useState(20);
+  const [newK4BySede, setNewK4BySede] = useState({});
   const [activeTab, setActiveTab] = useState('entrada');
   const [activeSedeIdx, setActiveSedeIdx] = useState(0);
   const [reportSedeIdx, setReportSedeIdx] = useState(0);
 
   const projectedSedes = useMemo(
-    () => sedes.map((sede) => projectSede(sede, newK4Students)),
-    [sedes, newK4Students]
+    () => sedes.map((sede) => projectSede(sede, newK4BySede[sede.id] || 0)),
+    [sedes, newK4BySede]
   );
+
+  function setNewK4ForSede(sedeId, value) {
+    setNewK4BySede((prev) => ({ ...prev, [sedeId]: Number(value) || 0 }));
+  }
 
   function addSede() {
     const newSede = createDefaultSede('Sede ' + (sedes.length + 1));
@@ -90,20 +94,6 @@ export default function App() {
         {activeTab === 'entrada' && (
           <div className="entrada-section">
             <div className="entrada-controls">
-              <div className="k4-control">
-                <label htmlFor="k4-input">
-                  Nuevos estudiantes K4 para {PROJECTED_YEAR}
-                  <span className="k4-hint">Max. {MAX_GROUP_SIZE} por grupo</span>
-                </label>
-                <input
-                  id="k4-input"
-                  type="number"
-                  min="0"
-                  value={newK4Students}
-                  onChange={(e) => setNewK4Students(Number(e.target.value) || 0)}
-                  className="k4-input"
-                />
-              </div>
               <ImportButton onImport={(newSedes) => { setSedes(newSedes); setActiveSedeIdx(0); }} />
               <button className="btn-add-sede" onClick={addSede}>+ Agregar Sede</button>
             </div>
@@ -122,11 +112,27 @@ export default function App() {
             </div>
 
             {sedes[activeSedeIdx] && (
-              <SedePanel
-                sede={sedes[activeSedeIdx]}
-                onChange={(updated) => updateSede(activeSedeIdx, updated)}
-                readOnly={false}
-              />
+              <>
+                <div className="k4-control">
+                  <label htmlFor="k4-input">
+                    Nuevos estudiantes K4 para {PROJECTED_YEAR} — {sedes[activeSedeIdx].name}
+                    <span className="k4-hint">Max. {MAX_GROUP_SIZE} por grupo</span>
+                  </label>
+                  <input
+                    id="k4-input"
+                    type="number"
+                    min="0"
+                    value={newK4BySede[sedes[activeSedeIdx].id] || 0}
+                    onChange={(e) => setNewK4ForSede(sedes[activeSedeIdx].id, e.target.value)}
+                    className="k4-input"
+                  />
+                </div>
+                <SedePanel
+                  sede={sedes[activeSedeIdx]}
+                  onChange={(updated) => updateSede(activeSedeIdx, updated)}
+                  readOnly={false}
+                />
+              </>
             )}
           </div>
         )}
