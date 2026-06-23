@@ -65,7 +65,7 @@ export default function SchoolTable({ school, onChange, readOnly }) {
               )}
               {TRANSITION_GRADES.includes(gradeEntry.grade) && (
                 <td className="transition-badge-cell" rowSpan={1}>
-                  <span className="transition-badge">→ cambia sede</span>
+                  <span className="transition-badge">→ cambia escuela</span>
                 </td>
               )}
               {gradeEntry.grade === GRADUATING_GRADE && (
