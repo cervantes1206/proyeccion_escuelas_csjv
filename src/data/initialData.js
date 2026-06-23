@@ -24,7 +24,7 @@ export const TRANSITION_GRADES = ['K6', '3', '5', '8'];
 export const GRADUATING_GRADE = '11';
 
 // Max students per group for new intake (K4 to grade 3)
-export const MAX_GROUP_SIZE = 25;
+export const MAX_GROUP_SIZE = 28;
 
 // Grades that can receive new students
 export const NEW_INTAKE_GRADES = ['K4', 'K5', 'K6', '1', '2', '3'];
