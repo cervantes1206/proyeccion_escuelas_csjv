@@ -97,6 +97,7 @@ body {
 }
 .k4-control label { font-size: .85rem; font-weight: 600; color: #374151; display: flex; flex-direction: column; gap: .15rem; }
 .k4-hint { font-size: .75rem; color: #64748b; font-weight: 400; }
+.k4-control-report { background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; flex-direction: row; align-items: center; gap: 1.5rem; }
 .k4-input {
   width: 120px;
   padding: .5rem .75rem;

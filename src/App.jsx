@@ -155,6 +155,20 @@ export default function App() {
             </div>
             {sedes[reportSedeIdx] && projectedSedes[reportSedeIdx] && (
               <>
+                <div className="k4-control k4-control-report">
+                  <label htmlFor={`k4-report-${reportSedeIdx}`}>
+                    Nuevos K4 en {PROJECTED_YEAR} — {sedes[reportSedeIdx].name}
+                    <span className="k4-hint">Max. {MAX_GROUP_SIZE} por grupo</span>
+                  </label>
+                  <input
+                    id={`k4-report-${reportSedeIdx}`}
+                    type="number"
+                    min="0"
+                    value={newK4BySede[sedes[reportSedeIdx].id] || 0}
+                    onChange={(e) => setNewK4ForSede(sedes[reportSedeIdx].id, e.target.value)}
+                    className="k4-input"
+                  />
+                </div>
                 <div className="report-two-col">
                   <div className="report-col">
                     <h3 className="col-title">Matricula Actual ({CURRENT_YEAR})</h3>
