@@ -5,6 +5,7 @@ import { projectSede, grandTotal } from './utils/projection';
 import SedePanel from './components/SedePanel';
 import SedeReport from './components/SedeReport';
 import GeneralReport from './components/GeneralReport';
+import SchoolReport from './components/SchoolReport';
 import ImportButton from './components/ImportButton';
 import './styles/app.css';
 
@@ -170,22 +171,12 @@ export default function App() {
         )}
 
         {activeTab === 'reporte-escuela' && (
-          <div className="report-section">
-            <div className="report-two-col">
-              <div className="report-col">
-                <h3 className="col-title">Matricula Actual ({CURRENT_YEAR})</h3>
-                {sedes.map((sede) => (
-                  <SedePanel key={sede.id} sede={sede} onChange={() => {}} readOnly={true} />
-                ))}
-              </div>
-              <div className="report-col">
-                <h3 className="col-title">Proyeccion ({PROJECTED_YEAR})</h3>
-                {projectedSedes.map((sede) => (
-                  <SedePanel key={sede.id} sede={sede} onChange={() => {}} readOnly={true} />
-                ))}
-              </div>
-            </div>
-          </div>
+          <SchoolReport
+            currentSedes={sedes}
+            projectedSedes={projectedSedes}
+            currentYear={CURRENT_YEAR}
+            projectedYear={PROJECTED_YEAR}
+          />
         )}
 
         {activeTab === 'reporte-general' && (

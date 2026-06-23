@@ -1,5 +1,5 @@
 import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
-import { sedeStats, aggregateBySchool, grandTotal, gradeTotal } from './projection';
+import { sedeStats, aggregateBySchool, grandTotal } from './projection';
 
 const SCHOOL_ORDER = ['Preschool', 'Elementary', 'Middle', 'Upper Middle', 'High'];
 
@@ -165,4 +165,68 @@ export async function exportGeneralReport(currentSedes, projectedSedes, currentY
   }
 
   XLSX.writeFile(wb, `Proyeccion_General_${projectedYear}.xlsx`);
+}
+
+// ── Informe por Escuela ───────────────────────────────────────────
+export async function exportSchoolReport(currentSedes, projectedSedes, schoolType, currentYear, projectedYear) {
+  const XLSX = await getXLSX();
+  const wb = XLSX.utils.book_new();
+  const current = aggregateBySchool(currentSedes);
+  const projected = aggregateBySchool(projectedSedes);
+  const grades = GRADES_BY_SCHOOL[schoolType];
+
+  const rows = [
+    [`Informe por Escuela: ${schoolType}`],
+    [`Año actual: ${currentYear}`, '', `Año proyectado: ${projectedYear}`],
+    [],
+    ['Grado', `Estudiantes ${currentYear}`, `Grupos ${currentYear}`, `Estudiantes ${projectedYear}`, `Grupos ${projectedYear}`, 'Variación'],
+  ];
+
+  let totalCur = 0, totalProj = 0;
+  for (const grade of grades) {
+    const cur = current[schoolType]?.[grade] || { total: 0, groups: 0 };
+    const proj = projected[schoolType]?.[grade] || { total: 0, groups: 0 };
+    const diff = proj.total - cur.total;
+    rows.push([GRADE_LABELS[grade], cur.total, cur.groups, proj.total, proj.groups, diff >= 0 ? `+${diff}` : `${diff}`]);
+    totalCur += cur.total;
+    totalProj += proj.total;
+  }
+  const totalDiff = totalProj - totalCur;
+  rows.push(['TOTAL', totalCur, '', totalProj, '', totalDiff >= 0 ? `+${totalDiff}` : `${totalDiff}`]);
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 12 }, { wch: 22 }, { wch: 16 }, { wch: 22 }, { wch: 18 }, { wch: 12 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Consolidado');
+
+  // One sheet per sede
+  for (let i = 0; i < currentSedes.length; i++) {
+    const sede = currentSedes[i];
+    const projSede = projectedSedes[i];
+    const curStats = sedeStats(sede);
+    const projStats = sedeStats(projSede);
+
+    const sedeRows = [
+      [`Sede: ${sede.name} — ${schoolType}`],
+      [],
+      ['Grado', `Estudiantes ${currentYear}`, `Grupos ${currentYear}`, `Estudiantes ${projectedYear}`, `Grupos ${projectedYear}`, 'Variación'],
+    ];
+
+    let sCur = 0, sProj = 0;
+    for (const grade of grades) {
+      const cur = curStats[schoolType]?.[grade] || { total: 0, groups: 0 };
+      const proj = projStats[schoolType]?.[grade] || { total: 0, groups: 0 };
+      const diff = proj.total - cur.total;
+      sedeRows.push([GRADE_LABELS[grade], cur.total, cur.groups, proj.total, proj.groups, diff >= 0 ? `+${diff}` : `${diff}`]);
+      sCur += cur.total;
+      sProj += proj.total;
+    }
+    const sDiff = sProj - sCur;
+    sedeRows.push(['TOTAL', sCur, '', sProj, '', sDiff >= 0 ? `+${sDiff}` : `${sDiff}`]);
+
+    const wsSede = XLSX.utils.aoa_to_sheet(sedeRows);
+    wsSede['!cols'] = [{ wch: 12 }, { wch: 22 }, { wch: 16 }, { wch: 22 }, { wch: 18 }, { wch: 12 }];
+    XLSX.utils.book_append_sheet(wb, wsSede, sede.name.slice(0, 31));
+  }
+
+  XLSX.writeFile(wb, `Proyeccion_${schoolType.replace(/\s+/g, '_')}_${projectedYear}.xlsx`);
 }
