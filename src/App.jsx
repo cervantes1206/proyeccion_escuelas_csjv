@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { INITIAL_SEDES, createDefaultSede, MAX_GROUP_SIZE } from './data/initialData';
+import { createDefaultSede, MAX_GROUP_SIZE } from './data/initialData';
+import { SEDES_2026 } from './data/sedes2026';
 import { projectSede, grandTotal } from './utils/projection';
 import SedePanel from './components/SedePanel';
 import SedeReport from './components/SedeReport';
@@ -10,7 +11,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 const PROJECTED_YEAR = CURRENT_YEAR + 1;
 
 export default function App() {
-  const [sedes, setSedes] = useState(INITIAL_SEDES);
+  const [sedes, setSedes] = useState(SEDES_2026);
   const [newK4Students, setNewK4Students] = useState(20);
   const [activeTab, setActiveTab] = useState('entrada');
   const [activeSedeIdx, setActiveSedeIdx] = useState(0);
