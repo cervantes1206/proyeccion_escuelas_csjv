@@ -1,5 +1,7 @@
-import { sedeStats, gradeTotal } from '../utils/projection';
+import { sedeStats } from '../utils/projection';
 import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
+import { exportSedeReport } from '../utils/exportExcel';
+import ExportButton from './ExportButton';
 
 const SCHOOL_COLORS = {
   Preschool: '#7c3aed',
@@ -20,8 +22,16 @@ export default function SedeReport({ currentSede, projectedSede, currentYear, pr
   return (
     <div className="sede-report">
       <div className="report-header">
-        <h3>Informe por Sede: <span className="sede-highlight">{currentSede.name}</span></h3>
-        <p className="report-subtitle">Comparativo {currentYear} → {projectedYear}</p>
+        <div className="report-header-row">
+          <div>
+            <h3>Informe por Sede: <span className="sede-highlight">{currentSede.name}</span></h3>
+            <p className="report-subtitle">Comparativo {currentYear} &rarr; {projectedYear}</p>
+          </div>
+          <ExportButton
+            label="Exportar Excel"
+            onClick={() => exportSedeReport(currentSede, projectedSede, currentYear, projectedYear)}
+          />
+        </div>
       </div>
 
       <div className="summary-cards">

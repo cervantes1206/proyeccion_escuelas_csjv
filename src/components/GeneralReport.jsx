@@ -1,5 +1,7 @@
-import { aggregateBySchool, grandTotal, gradeTotal } from '../utils/projection';
+import { aggregateBySchool, grandTotal } from '../utils/projection';
 import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
+import { exportGeneralReport } from '../utils/exportExcel';
+import ExportButton from './ExportButton';
 
 const SCHOOL_COLORS = {
   Preschool: '#7c3aed',
@@ -19,8 +21,16 @@ export default function GeneralReport({ currentSedes, projectedSedes, currentYea
   return (
     <div className="general-report">
       <div className="report-header">
-        <h2>Informe General Consolidado</h2>
-        <p className="report-subtitle">Comparativo {currentYear} → {projectedYear}</p>
+        <div className="report-header-row">
+          <div>
+            <h2>Informe General Consolidado</h2>
+            <p className="report-subtitle">Comparativo {currentYear} &rarr; {projectedYear}</p>
+          </div>
+          <ExportButton
+            label="Exportar Excel"
+            onClick={() => exportGeneralReport(currentSedes, projectedSedes, currentYear, projectedYear)}
+          />
+        </div>
       </div>
 
       <div className="summary-cards">
