@@ -32,6 +32,7 @@ export default function SchoolTable({ school, onChange, readOnly }) {
             <th>Grupos</th>
             <th>Total</th>
             <th>N° Grupos</th>
+            <th>♀ / ♂</th>
           </tr>
         </thead>
         <tbody>
@@ -55,6 +56,9 @@ export default function SchoolTable({ school, onChange, readOnly }) {
                   </td>
                   <td className="total-cell">{gradeTotal(gradeEntry)}</td>
                   <td className="groups-count-cell">{gradeEntry.groups.length} {gradeEntry.groups.length === 1 ? 'grupo' : 'grupos'}</td>
+                  <td className="gender-cell">
+                    {(() => { const g = Number(gradeEntry.girls)||0; const t = gradeTotal(gradeEntry); return <span className="gender-readonly"><span className="gender-girls">{g}♀</span><span className="gender-boys">{t-g}♂</span></span>; })()}
+                  </td>
                 </>
               ) : (
                 <GradeRow

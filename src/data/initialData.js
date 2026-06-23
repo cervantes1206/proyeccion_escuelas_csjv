@@ -82,6 +82,7 @@ export const createDefaultSchool = (type) => ({
   type,
   grades: GRADES_BY_SCHOOL[type].map((grade) => ({
     grade,
+    girls: 0,
     groups: [{ id: crypto.randomUUID(), students: 0 }],
   })),
 });

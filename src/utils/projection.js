@@ -143,14 +143,13 @@ export function genderBySchool(sedes) {
   for (const sede of sedes) {
     for (const school of sede.schools) {
       for (const gradeEntry of school.grades) {
-        for (const g of gradeEntry.groups) {
-          const girls = Number(g.girls) || 0;
-          const boys = Number(g.boys) || 0;
-          result[school.type][gradeEntry.grade].girls += girls;
-          result[school.type][gradeEntry.grade].boys += boys;
-          result[school.type]._girls += girls;
-          result[school.type]._boys += boys;
-        }
+        const total = gradeTotal(gradeEntry);
+        const girls = Math.min(Number(gradeEntry.girls) || 0, total);
+        const boys = total - girls;
+        result[school.type][gradeEntry.grade].girls += girls;
+        result[school.type][gradeEntry.grade].boys += boys;
+        result[school.type]._girls += girls;
+        result[school.type]._boys += boys;
       }
     }
   }

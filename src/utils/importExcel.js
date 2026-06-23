@@ -63,16 +63,16 @@ function buildSedes(rows) {
     if (!tree[sedeName][schoolType]) tree[sedeName][schoolType] = {};
     if (!tree[sedeName][schoolType][grade]) tree[sedeName][schoolType][grade] = {};
     if (!tree[sedeName][schoolType][grade][groupName]) {
-      tree[sedeName][schoolType][grade][groupName] = { students: 0, girls: 0, boys: 0 };
+      tree[sedeName][schoolType][grade][groupName] = 0;
     }
-    tree[sedeName][schoolType][grade][groupName].students++;
+    tree[sedeName][schoolType][grade][groupName]++;
 
+    // Count girls per grade (grade-level, not per group)
+    if (!tree[sedeName][schoolType][grade].__girls) tree[sedeName][schoolType][grade].__girls = 0;
     const sexoRaw = (row['Sexo'] ?? row['SEXO'] ?? row['Género'] ?? row['Genero'] ?? row['GENERO'] ?? '')
       .toString().trim().toUpperCase();
     if (sexoRaw === 'F' || sexoRaw === 'FEMENINO' || sexoRaw === 'MUJER') {
-      tree[sedeName][schoolType][grade][groupName].girls++;
-    } else if (sexoRaw === 'M' || sexoRaw === 'MASCULINO' || sexoRaw === 'HOMBRE') {
-      tree[sedeName][schoolType][grade][groupName].boys++;
+      tree[sedeName][schoolType][grade].__girls++;
     }
   }
 
@@ -84,12 +84,15 @@ function buildSedes(rows) {
       id: crypto.randomUUID(),
       type: schoolType,
       grades: GRADES_BY_SCHOOL[schoolType].map((grade) => {
-        const gradeGroups = schools[schoolType]?.[grade] || {};
-        const groups = Object.entries(gradeGroups)
+        const gradeData = schools[schoolType]?.[grade] || {};
+        const girls = gradeData.__girls || 0;
+        const groups = Object.entries(gradeData)
+          .filter(([k]) => k !== '__girls')
           .sort(([a], [b]) => a.localeCompare(b))
-          .map(([, g]) => ({ id: crypto.randomUUID(), students: g.students, girls: g.girls, boys: g.boys }));
+          .map(([, count]) => ({ id: crypto.randomUUID(), students: count }));
         return {
           grade,
+          girls,
           groups: groups.length > 0 ? groups : [{ id: crypto.randomUUID(), students: 0 }],
         };
       }),

@@ -27,6 +27,14 @@ export default function GradeRow({ gradeEntry, onChange, readOnly }) {
     });
   }
 
+  const girls = Number(gradeEntry.girls) || 0;
+  const boys = total - girls;
+
+  function handleGirlsChange(value) {
+    const v = Math.max(0, Math.min(total, Number(value) || 0));
+    onChange({ ...gradeEntry, girls: v });
+  }
+
   return (
     <tr className="grade-row">
       <td className="grade-label">{GRADE_LABELS[gradeEntry.grade]}</td>
@@ -59,6 +67,29 @@ export default function GradeRow({ gradeEntry, onChange, readOnly }) {
       </td>
       <td className="total-cell">{total}</td>
       <td className="groups-count-cell">{gradeEntry.groups.length} {gradeEntry.groups.length === 1 ? 'grupo' : 'grupos'}</td>
+      <td className="gender-cell">
+        {readOnly ? (
+          <span className="gender-readonly">
+            <span className="gender-girls">{girls}♀</span>
+            <span className="gender-boys">{boys}♂</span>
+          </span>
+        ) : (
+          <div className="gender-input-wrap">
+            <label className="gender-label girls">♀
+              <input
+                type="number"
+                min="0"
+                max={total}
+                value={girls}
+                onChange={(e) => handleGirlsChange(e.target.value)}
+                className="gender-input"
+                title="Niñas"
+              />
+            </label>
+            <span className="gender-boys-auto" title="Niños (calculado)">♂ {boys}</span>
+          </div>
+        )}
+      </td>
     </tr>
   );
 }

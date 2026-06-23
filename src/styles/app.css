@@ -330,6 +330,15 @@ body {
 
 .total-cell { font-weight: 700; font-size: .9rem; color: #1e293b; }
 .groups-count-cell { color: #64748b; font-size: .82rem; }
+.gender-cell { white-space: nowrap; }
+.gender-readonly { display: flex; gap: .35rem; font-size: .82rem; }
+.gender-girls { color: #db2777; font-weight: 600; }
+.gender-boys { color: #2563eb; font-weight: 600; }
+.gender-input-wrap { display: flex; align-items: center; gap: .4rem; }
+.gender-label { display: flex; align-items: center; gap: .2rem; color: #db2777; font-size: .8rem; font-weight: 600; }
+.gender-input { width: 52px; padding: .2rem .3rem; border: 1px solid #e2e8f0; border-radius: 5px; font-size: .82rem; text-align: center; }
+.gender-input:focus { outline: none; border-color: #db2777; box-shadow: 0 0 0 2px #fce7f3; }
+.gender-boys-auto { color: #2563eb; font-size: .82rem; font-weight: 600; }
 .school-footer { font-size: .875rem; }
 
 /* ── Reports ── */
