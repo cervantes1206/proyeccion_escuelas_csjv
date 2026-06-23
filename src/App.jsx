@@ -5,6 +5,7 @@ import { projectSede, grandTotal } from './utils/projection';
 import SedePanel from './components/SedePanel';
 import SedeReport from './components/SedeReport';
 import GeneralReport from './components/GeneralReport';
+import ImportButton from './components/ImportButton';
 import './styles/app.css';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -102,6 +103,7 @@ export default function App() {
                   className="k4-input"
                 />
               </div>
+              <ImportButton onImport={(newSedes) => { setSedes(newSedes); setActiveSedeIdx(0); }} />
               <button className="btn-add-sede" onClick={addSede}>+ Agregar Sede</button>
             </div>
 
