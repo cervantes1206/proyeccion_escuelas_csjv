@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { aggregateBySchool } from '../utils/projection';
+import { aggregateBySchool, genderBySchool } from '../utils/projection';
 import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
 import { exportSchoolReport } from '../utils/exportExcel';
 import ExportButton from './ExportButton';
@@ -19,6 +19,8 @@ const SCHOOL_COLORS = {
 export default function SchoolReport({ currentSedes, projectedSedes, currentYear, projectedYear }) {
   const current = aggregateBySchool(currentSedes);
   const projected = aggregateBySchool(projectedSedes);
+  const gender = genderBySchool(currentSedes);
+  const hasGender = Object.values(gender).some(s => (s._girls + s._boys) > 0);
 
   return (
     <div className="general-report">
@@ -32,6 +34,9 @@ export default function SchoolReport({ currentSedes, projectedSedes, currentYear
         const diff = projTotal - curTotal;
         const curGroups = Object.values(curSchool).filter(v => v?.groups).reduce((s, v) => s + v.groups, 0);
         const projGroups = Object.values(projSchool).filter(v => v?.groups).reduce((s, v) => s + v.groups, 0);
+        const schoolGender = gender[schoolType] || {};
+        const totalGirls = schoolGender._girls || 0;
+        const totalBoys = schoolGender._boys || 0;
 
         return (
           <div key={schoolType} className="school-report-block">
@@ -69,6 +74,44 @@ export default function SchoolReport({ currentSedes, projectedSedes, currentYear
                 projectedYear={projectedYear}
               />
             </Suspense>
+
+            {hasGender && (
+              <table className="report-table" style={{ marginBottom: '0.5rem' }}>
+                <thead>
+                  <tr>
+                    <th>Grado</th>
+                    <th style={{ color: '#db2777' }}>Niñas</th>
+                    <th style={{ color: '#2563eb' }}>Niños</th>
+                    <th>Total</th>
+                    <th>% Niñas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grades.map((grade) => {
+                    const g = schoolGender[grade] || { girls: 0, boys: 0 };
+                    const tot = g.girls + g.boys;
+                    return (
+                      <tr key={grade}>
+                        <td className="grade-label">{GRADE_LABELS[grade]}</td>
+                        <td style={{ color: '#db2777', fontWeight: 600 }}>{g.girls}</td>
+                        <td style={{ color: '#2563eb', fontWeight: 600 }}>{g.boys}</td>
+                        <td>{tot}</td>
+                        <td>{tot > 0 ? ((g.girls / tot) * 100).toFixed(1) + '%' : '—'}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td><strong>Total</strong></td>
+                    <td style={{ color: '#db2777' }}><strong>{totalGirls}</strong></td>
+                    <td style={{ color: '#2563eb' }}><strong>{totalBoys}</strong></td>
+                    <td><strong>{totalGirls + totalBoys}</strong></td>
+                    <td><strong>{totalGirls + totalBoys > 0 ? ((totalGirls / (totalGirls + totalBoys)) * 100).toFixed(1) + '%' : '—'}</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            )}
 
             <table className="report-table">
               <thead>

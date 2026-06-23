@@ -131,6 +131,32 @@ export function grandTotal(sedes) {
   }, 0);
 }
 
+// Gender breakdown across all sedes: schoolType -> grade -> { girls, boys }
+export function genderBySchool(sedes) {
+  const result = {};
+  for (const [schoolType, grades] of Object.entries(GRADES_BY_SCHOOL)) {
+    result[schoolType] = { _girls: 0, _boys: 0 };
+    for (const grade of grades) {
+      result[schoolType][grade] = { girls: 0, boys: 0 };
+    }
+  }
+  for (const sede of sedes) {
+    for (const school of sede.schools) {
+      for (const gradeEntry of school.grades) {
+        for (const g of gradeEntry.groups) {
+          const girls = Number(g.girls) || 0;
+          const boys = Number(g.boys) || 0;
+          result[school.type][gradeEntry.grade].girls += girls;
+          result[school.type][gradeEntry.grade].boys += boys;
+          result[school.type]._girls += girls;
+          result[school.type]._boys += boys;
+        }
+      }
+    }
+  }
+  return result;
+}
+
 // Detect transition grades that move between schools
 export function getTransitions(sede) {
   const transitions = [];

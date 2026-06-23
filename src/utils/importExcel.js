@@ -62,8 +62,18 @@ function buildSedes(rows) {
     if (!tree[sedeName]) tree[sedeName] = {};
     if (!tree[sedeName][schoolType]) tree[sedeName][schoolType] = {};
     if (!tree[sedeName][schoolType][grade]) tree[sedeName][schoolType][grade] = {};
-    if (!tree[sedeName][schoolType][grade][groupName]) tree[sedeName][schoolType][grade][groupName] = 0;
-    tree[sedeName][schoolType][grade][groupName]++;
+    if (!tree[sedeName][schoolType][grade][groupName]) {
+      tree[sedeName][schoolType][grade][groupName] = { students: 0, girls: 0, boys: 0 };
+    }
+    tree[sedeName][schoolType][grade][groupName].students++;
+
+    const sexoRaw = (row['Sexo'] ?? row['SEXO'] ?? row['Género'] ?? row['Genero'] ?? row['GENERO'] ?? '')
+      .toString().trim().toUpperCase();
+    if (sexoRaw === 'F' || sexoRaw === 'FEMENINO' || sexoRaw === 'MUJER') {
+      tree[sedeName][schoolType][grade][groupName].girls++;
+    } else if (sexoRaw === 'M' || sexoRaw === 'MASCULINO' || sexoRaw === 'HOMBRE') {
+      tree[sedeName][schoolType][grade][groupName].boys++;
+    }
   }
 
   // Build sedes array matching app structure
@@ -77,7 +87,7 @@ function buildSedes(rows) {
         const gradeGroups = schools[schoolType]?.[grade] || {};
         const groups = Object.entries(gradeGroups)
           .sort(([a], [b]) => a.localeCompare(b))
-          .map(([, count]) => ({ id: crypto.randomUUID(), students: count }));
+          .map(([, g]) => ({ id: crypto.randomUUID(), students: g.students, girls: g.girls, boys: g.boys }));
         return {
           grade,
           groups: groups.length > 0 ? groups : [{ id: crypto.randomUUID(), students: 0 }],
