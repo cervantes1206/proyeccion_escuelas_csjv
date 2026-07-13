@@ -1,3 +1,5 @@
+import { GRADES_BY_SCHOOL } from '../data/initialData';
+
 const GRADE_MAP = {
   'KINDER 4': 'K4', 'KINDER 5': 'K5', 'KINDER 6': 'K6',
   'PRIMERO': '1', 'SEGUNDO': '2', 'TERCERO': '3',
@@ -15,7 +17,7 @@ const SCHOOL_BY_GRADE = {
 };
 
 const SCHOOL_ORDER = ['Preschool', 'Elementary', 'Middle', 'Upper Middle', 'High'];
-const GRADE_ORDER = ['K4','K5','K6','1','2','3','4','5','6','7','8','9','10','11'];
+const GRADE_ORDER = ['K4', 'K5', 'K6', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
 function isFemale(sexoRaw) {
   const s = (sexoRaw || '').toString().trim().toUpperCase();
@@ -31,15 +33,13 @@ function normalizeSede(raw) {
 
 function parseGroupName(groupRaw) {
   const s = (groupRaw || '').toString().replace(/^Grupo\s*:\s*/i, '').trim();
-  // "3-C/E" or "3-C" → extract letter after dash
   const match = s.match(/-([A-Za-z]+)/);
   return match ? match[1].toUpperCase() : (s || 'A');
 }
 
-function buildTree(rows) {
-  // tree: sede → school → grade → group → { total, girls }
+// Aggregate rows into: sedeName → schoolType → grade → groupName → { total, girls }
+function aggregateRows(rows) {
   const tree = {};
-
   for (const row of rows) {
     const sedeName = normalizeSede(row['Sede']);
     const gradoRaw = (row['Grado'] || '').toString().trim().toUpperCase();
@@ -52,15 +52,21 @@ function buildTree(rows) {
 
     if (!tree[sedeName]) tree[sedeName] = {};
     if (!tree[sedeName][school]) tree[sedeName][school] = {};
-    if (!tree[sedeName][school][grade]) tree[sedeName][school][grade] = {};
+    if (!tree[sedeName][school][grade]) tree[sedeName][school][grade] = { __girls: 0 };
     if (!tree[sedeName][school][grade][groupName]) {
       tree[sedeName][school][grade][groupName] = { total: 0, girls: 0 };
     }
     tree[sedeName][school][grade][groupName].total++;
-    if (female) tree[sedeName][school][grade][groupName].girls++;
+    if (female) {
+      tree[sedeName][school][grade][groupName].girls++;
+      tree[sedeName][school][grade].__girls++;
+    }
   }
+  return tree;
+}
 
-  // Build ordered structure
+// Dashboard display structure: cascading sede → school → grade → groups[]
+function buildDashboardTree(tree) {
   return Object.entries(tree)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([sedeName, schools]) => ({
@@ -74,6 +80,7 @@ function buildTree(rows) {
             .map((grade) => ({
               grade,
               groups: Object.entries(schools[schoolName][grade])
+                .filter(([k]) => k !== '__girls')
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([groupName, counts]) => ({ name: groupName, ...counts })),
             })),
@@ -81,7 +88,33 @@ function buildTree(rows) {
     }));
 }
 
-// Parse CSV with semicolon separator (latin-1 encoded)
+// Projection-compatible structure (matches sedes2026.js / importExcel.js output)
+function buildProjectionSedes(tree) {
+  return Object.entries(tree)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([sedeName, schools]) => ({
+      id: crypto.randomUUID(),
+      name: sedeName,
+      schools: SCHOOL_ORDER.map((schoolType) => ({
+        id: crypto.randomUUID(),
+        type: schoolType,
+        grades: GRADES_BY_SCHOOL[schoolType].map((grade) => {
+          const gradeData = schools[schoolType]?.[grade] || {};
+          const girls = gradeData.__girls || 0;
+          const groups = Object.entries(gradeData)
+            .filter(([k]) => k !== '__girls')
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([, counts]) => ({ id: crypto.randomUUID(), students: counts.total }));
+          return {
+            grade,
+            girls,
+            groups: groups.length > 0 ? groups : [{ id: crypto.randomUUID(), students: 0 }],
+          };
+        }),
+      })),
+    }));
+}
+
 function parseCsvRows(text) {
   const lines = text.split(/\r?\n/).filter(Boolean);
   if (lines.length < 2) return [];
@@ -94,19 +127,24 @@ function parseCsvRows(text) {
   });
 }
 
+// Returns { dashboardData, projectionSedes }
 export function parseStudentFile(file) {
   return new Promise((resolve, reject) => {
     const name = file.name.toLowerCase();
 
+    function processRows(rows) {
+      const tree = aggregateRows(rows);
+      resolve({
+        dashboardData: buildDashboardTree(tree),
+        projectionSedes: buildProjectionSedes(tree),
+      });
+    }
+
     if (name.endsWith('.csv')) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        try {
-          const rows = parseCsvRows(e.target.result);
-          resolve(buildTree(rows));
-        } catch (err) {
-          reject(new Error('Error al leer CSV: ' + err.message));
-        }
+        try { processRows(parseCsvRows(e.target.result)); }
+        catch (err) { reject(new Error('Error al leer CSV: ' + err.message)); }
       };
       reader.onerror = () => reject(new Error('Error al leer el archivo'));
       reader.readAsText(file, 'ISO-8859-1');
@@ -117,11 +155,8 @@ export function parseStudentFile(file) {
           const XLSX = await import('xlsx');
           const wb = XLSX.read(e.target.result, { type: 'array' });
           const ws = wb.Sheets[wb.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(ws);
-          resolve(buildTree(rows));
-        } catch (err) {
-          reject(new Error('Error al leer Excel: ' + err.message));
-        }
+          processRows(XLSX.utils.sheet_to_json(ws));
+        } catch (err) { reject(new Error('Error al leer Excel: ' + err.message)); }
       };
       reader.onerror = () => reject(new Error('Error al leer el archivo'));
       reader.readAsArrayBuffer(file);

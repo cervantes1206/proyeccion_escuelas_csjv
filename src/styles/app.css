@@ -588,3 +588,4 @@ body {
 .db-gender-labels { display: flex; gap: .5rem; font-size: .78rem; white-space: nowrap; }
 .db-girls { color: #ec4899; font-weight: 600; }
 .db-boys { color: #3b82f6; font-weight: 600; }
+.db-success { background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: .75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: .9rem; }

@@ -142,11 +142,12 @@ function SedeSection({ sede, openSchools, openGrades, onSchoolToggle, onGradeTog
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ onImport }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fileName, setFileName] = useState(null);
+  const [imported, setImported] = useState(false);
   const [openSchools, setOpenSchools] = useState(new Set());
   const [openGrades, setOpenGrades] = useState(new Set());
   const fileRef = useRef();
@@ -193,12 +194,17 @@ export default function Dashboard() {
     setLoading(true);
     setError(null);
     setData(null);
+    setImported(false);
     setOpenSchools(new Set());
     setOpenGrades(new Set());
     try {
-      const result = await parseStudentFile(file);
-      setData(result);
+      const { dashboardData, projectionSedes } = await parseStudentFile(file);
+      setData(dashboardData);
       setFileName(file.name);
+      if (onImport) {
+        onImport(projectionSedes);
+        setImported(true);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -250,6 +256,11 @@ export default function Dashboard() {
       </div>
 
       {error && <div className="db-error">{error}</div>}
+      {imported && (
+        <div className="db-success">
+          ✓ Datos cargados en el módulo de proyección — ve a <strong>Ingreso de Datos</strong> o <strong>Informe por Sede</strong> para ver la proyección 2027.
+        </div>
+      )}
 
       {data && (
         <>

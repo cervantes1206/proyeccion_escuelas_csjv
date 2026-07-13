@@ -210,7 +210,9 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'dashboard' && <Dashboard />}
+        {activeTab === 'dashboard' && (
+          <Dashboard onImport={(newSedes) => { setSedes(newSedes); setActiveSedeIdx(0); }} />
+        )}
       </main>
     </div>
   );
