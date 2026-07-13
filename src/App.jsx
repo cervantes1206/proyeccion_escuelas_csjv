@@ -7,6 +7,7 @@ import SedeReport from './components/SedeReport';
 import GeneralReport from './components/GeneralReport';
 import SchoolReport from './components/SchoolReport';
 import ImportButton from './components/ImportButton';
+import Dashboard from './components/Dashboard';
 import './styles/app.css';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -79,6 +80,7 @@ export default function App() {
           { id: 'reporte-sede', label: 'Informe por Sede' },
           { id: 'reporte-escuela', label: 'Informe por Escuela' },
           { id: 'reporte-general', label: 'Informe General' },
+          { id: 'dashboard', label: 'Dashboard' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -207,6 +209,8 @@ export default function App() {
             projectedYear={PROJECTED_YEAR}
           />
         )}
+
+        {activeTab === 'dashboard' && <Dashboard />}
       </main>
     </div>
   );

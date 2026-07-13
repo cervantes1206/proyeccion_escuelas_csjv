@@ -527,3 +527,64 @@ body {
   color: #64748b;
   margin-bottom: .5rem;
 }
+
+/* ── Dashboard ── */
+.dashboard { padding: 1.5rem; max-width: 900px; margin: 0 auto; }
+
+.db-upload-zone {
+  border: 2px dashed #cbd5e1; border-radius: 12px; padding: 2rem;
+  text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
+  margin-bottom: 1.5rem;
+}
+.db-upload-zone:hover { border-color: #6366f1; background: #f5f3ff; }
+.db-upload-zone.loading { border-color: #94a3b8; cursor: wait; }
+.db-upload-text { display: flex; flex-direction: column; gap: .4rem; font-size: 1rem; font-weight: 600; color: #334155; }
+.db-upload-hint { font-size: .8rem; font-weight: 400; color: #94a3b8; }
+
+.db-error { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; padding: .75rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+
+.db-controls { display: flex; gap: .75rem; margin-bottom: 1rem; }
+.db-btn { padding: .4rem .9rem; border: 1px solid #cbd5e1; border-radius: 6px; background: white; cursor: pointer; font-size: .85rem; color: #374151; }
+.db-btn:hover { background: #f1f5f9; }
+
+.db-sedes { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.db-sede-block { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+
+.db-table { width: 100%; border-collapse: collapse; }
+.db-table td, .db-table th { padding: .55rem .75rem; }
+
+.db-sede-header { background: #1e293b; color: white; }
+.db-sede-name { font-size: 1rem; font-weight: 700; }
+.db-count-head { font-size: .9rem; font-weight: 600; white-space: nowrap; width: 130px; }
+.db-gender-head { width: 220px; }
+
+.db-school-toggle { cursor: pointer; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+.db-school-toggle:hover { background: #f1f5f9; }
+.db-school-toggle.open { background: #f1f5f9; }
+
+.db-school-label { font-weight: 600; font-size: .9rem; margin-left: .25rem; }
+.db-school-summary { font-size: .78rem; color: #94a3b8; margin-left: .75rem; }
+
+.db-school-row td { border-top: 1px solid #f1f5f9; font-weight: 600; font-size: .88rem; }
+.db-grade-row { cursor: pointer; }
+.db-grade-row:hover td { background: #f8fafc; }
+.db-grade-row td { border-top: 1px solid #f8fafc; font-size: .85rem; }
+.db-group-row td { border-top: 1px solid #f8fafc; font-size: .82rem; color: #64748b; }
+
+.db-toggle { font-size: .7rem; margin-right: .4rem; color: #94a3b8; }
+.db-school-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: .4rem; }
+.db-count { font-weight: 600; text-align: right; white-space: nowrap; }
+
+.db-indent-1 { padding-left: 1rem !important; }
+.db-indent-2 { padding-left: 2rem !important; }
+.db-indent-3 { padding-left: 3rem !important; }
+.db-indent-4 { padding-left: 4rem !important; color: #64748b; }
+
+.db-gender-bar-wrap { display: flex; align-items: center; gap: .5rem; }
+.db-gender-bar { flex: 1; height: 8px; border-radius: 4px; overflow: hidden; background: #e2e8f0; display: flex; }
+.db-bar-girls { background: #ec4899; height: 100%; transition: width .3s; }
+.db-bar-boys { background: #3b82f6; height: 100%; transition: width .3s; }
+.db-gender-labels { display: flex; gap: .5rem; font-size: .78rem; white-space: nowrap; }
+.db-girls { color: #ec4899; font-weight: 600; }
+.db-boys { color: #3b82f6; font-weight: 600; }
