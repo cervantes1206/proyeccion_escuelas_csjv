@@ -17,6 +17,17 @@ export const GRADES_BY_SCHOOL = {
 
 export const ALL_GRADES = ['K4', 'K5', 'K6', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
+// Categorical colors per school type, anchored on the institutional palette
+// (navy/orange/cyan from the CSJV logo). Validated for CVD-safe adjacency
+// in this fixed order with scripts/validate_palette.js from the dataviz skill.
+export const SCHOOL_COLORS = {
+  Preschool: '#1b63c7',
+  Elementary: '#ef7b0b',
+  Middle: '#00a7e1',
+  'Upper Middle': '#0e8a5b',
+  High: '#8b2f9e',
+};
+
 // Grades that transition to the next school level
 export const TRANSITION_GRADES = ['K6', '3', '5', '8'];
 

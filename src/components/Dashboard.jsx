@@ -1,13 +1,6 @@
 import { useState, useRef } from 'react';
 import { parseStudentFile } from '../utils/parseStudentFile';
-
-const SCHOOL_COLORS = {
-  Preschool: '#7c3aed',
-  Elementary: '#2563eb',
-  Middle: '#059669',
-  'Upper Middle': '#d97706',
-  High: '#dc2626',
-};
+import { SCHOOL_COLORS } from '../data/initialData';
 
 function GenderBar({ girls, total }) {
   const boys = total - girls;

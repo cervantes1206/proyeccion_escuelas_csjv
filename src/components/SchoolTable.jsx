@@ -1,14 +1,6 @@
 import GradeRow from './GradeRow';
 import { gradeTotal } from '../utils/projection';
-import { TRANSITION_GRADES, GRADUATING_GRADE } from '../data/initialData';
-
-const SCHOOL_COLORS = {
-  Preschool: '#7c3aed',
-  Elementary: '#2563eb',
-  Middle: '#059669',
-  'Upper Middle': '#d97706',
-  High: '#dc2626',
-};
+import { TRANSITION_GRADES, GRADUATING_GRADE, SCHOOL_COLORS } from '../data/initialData';
 
 export default function SchoolTable({ school, onChange, readOnly }) {
   const color = SCHOOL_COLORS[school.type] || '#374151';

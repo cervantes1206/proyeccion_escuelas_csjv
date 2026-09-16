@@ -1,5 +1,18 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  /* Colores institucionales — Colegio San José de Las Vegas (tomados del logo oficial) */
+  --csjv-navy: #111c4e;
+  --csjv-navy-dark: #0a1230;
+  --csjv-navy-tint: #e7e9f2;
+  --csjv-cyan: #00a7e1;
+  --csjv-cyan-dark: #0089ba;
+  --csjv-cyan-tint: #e3f6fc;
+  --csjv-orange: #ef7b0b;
+  --csjv-orange-dark: #c96406;
+  --csjv-orange-tint: #fef0e0;
+}
+
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: #f1f5f9;
@@ -9,7 +22,7 @@ body {
 
 /* ── Header ── */
 .app-header {
-  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--csjv-navy) 0%, var(--csjv-cyan) 100%);
   color: white;
   padding: 0 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,.25);
@@ -68,8 +81,8 @@ body {
   white-space: nowrap;
   transition: all .15s;
 }
-.nav-btn:hover { color: #2563eb; background: #f8fafc; }
-.nav-btn.active { color: #2563eb; border-bottom-color: #2563eb; font-weight: 600; }
+.nav-btn:hover { color: var(--csjv-cyan-dark); background: #f8fafc; }
+.nav-btn.active { color: var(--csjv-navy); border-bottom-color: var(--csjv-orange); font-weight: 600; }
 
 /* ── Main ── */
 .app-main {
@@ -108,9 +121,9 @@ body {
   color: #1e293b;
   transition: border-color .15s;
 }
-.k4-input:focus { outline: none; border-color: #2563eb; }
+.k4-input:focus { outline: none; border-color: var(--csjv-cyan); }
 .btn-add-sede {
-  background: #2563eb;
+  background: var(--csjv-navy);
   color: white;
   border: none;
   cursor: pointer;
@@ -120,7 +133,7 @@ body {
   font-weight: 600;
   transition: background .15s;
 }
-.btn-add-sede:hover { background: #1d4ed8; }
+.btn-add-sede:hover { background: var(--csjv-navy-dark); }
 
 /* ── Sede tabs ── */
 .sedes-tabs {
@@ -136,7 +149,7 @@ body {
   border: 2px solid #d1d5db;
   transition: border-color .15s;
 }
-.sede-tab-wrap.active { border-color: #2563eb; }
+.sede-tab-wrap.active { border-color: var(--csjv-navy); }
 .sede-tab-btn {
   background: white;
   border: none;
@@ -148,7 +161,7 @@ body {
   transition: background .15s, color .15s;
 }
 .sede-tab-wrap.active .sede-tab-btn,
-.sede-tab-btn.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+.sede-tab-btn.active { background: var(--csjv-cyan-tint); color: var(--csjv-navy); font-weight: 600; }
 .sede-remove-btn {
   background: #fee2e2;
   border: none;
@@ -179,11 +192,11 @@ body {
   transition: border-color .15s;
   flex: 1;
 }
-.sede-name-input:focus { outline: none; border-color: #2563eb; }
+.sede-name-input:focus { outline: none; border-color: var(--csjv-cyan); }
 .sede-name { font-size: 1.1rem; font-weight: 700; }
 .sede-total-badge {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--csjv-cyan-tint);
+  color: var(--csjv-navy);
   border-radius: 20px;
   padding: .2rem .75rem;
   font-size: .8rem;
@@ -213,7 +226,7 @@ body {
   transition: all .15s;
 }
 .school-tab:hover { color: #1e293b; background: #f1f5f9; }
-.school-tab.active { color: #1e293b; font-weight: 700; border-bottom-color: var(--school-color, #2563eb); }
+.school-tab.active { color: #1e293b; font-weight: 700; border-bottom-color: var(--school-color, var(--csjv-navy)); }
 .tab-count {
   background: #e2e8f0;
   border-radius: 10px;
@@ -221,7 +234,7 @@ body {
   font-size: .75rem;
   font-weight: 700;
 }
-.school-tab.active .tab-count { background: var(--school-color, #2563eb); color: white; }
+.school-tab.active .tab-count { background: var(--school-color, var(--csjv-navy)); color: white; }
 
 /* ── School table ── */
 .school-content { padding: 1rem; }
@@ -297,7 +310,7 @@ body {
   text-align: center;
   transition: border-color .15s;
 }
-.group-input:focus { outline: none; border-color: #2563eb; }
+.group-input:focus { outline: none; border-color: var(--csjv-cyan); }
 .group-value {
   min-width: 36px;
   text-align: center;
@@ -317,29 +330,29 @@ body {
   padding: 0 .1rem;
 }
 .btn-add-group {
-  background: #eff6ff;
-  border: 1.5px dashed #93c5fd;
+  background: var(--csjv-cyan-tint);
+  border: 1.5px dashed #7dd3f0;
   border-radius: 4px;
   cursor: pointer;
-  color: #2563eb;
+  color: var(--csjv-cyan-dark);
   font-size: .75rem;
   font-weight: 600;
   padding: .2rem .5rem;
   transition: all .15s;
 }
-.btn-add-group:hover { background: #dbeafe; }
+.btn-add-group:hover { background: #cdeefa; }
 
 .total-cell { font-weight: 700; font-size: .9rem; color: #1e293b; }
 .groups-count-cell { color: #64748b; font-size: .82rem; }
 .gender-cell { white-space: nowrap; }
 .gender-readonly { display: flex; gap: .35rem; font-size: .82rem; }
 .gender-girls { color: #db2777; font-weight: 600; }
-.gender-boys { color: #2563eb; font-weight: 600; }
+.gender-boys { color: var(--csjv-navy); font-weight: 600; }
 .gender-input-wrap { display: flex; align-items: center; gap: .4rem; }
 .gender-label { display: flex; align-items: center; gap: .2rem; color: #db2777; font-size: .8rem; font-weight: 600; }
 .gender-input { width: 52px; padding: .2rem .3rem; border: 1px solid #e2e8f0; border-radius: 5px; font-size: .82rem; text-align: center; }
 .gender-input:focus { outline: none; border-color: #db2777; box-shadow: 0 0 0 2px #fce7f3; }
-.gender-boys-auto { color: #2563eb; font-size: .82rem; font-weight: 600; }
+.gender-boys-auto { color: var(--csjv-navy); font-size: .82rem; font-weight: 600; }
 .school-footer { font-size: .875rem; }
 
 /* ── Reports ── */
@@ -356,7 +369,7 @@ body {
   padding: .5rem .75rem;
   background: white;
   border-radius: 8px;
-  border-left: 4px solid #2563eb;
+  border-left: 4px solid var(--csjv-navy);
   box-shadow: 0 1px 2px rgba(0,0,0,.06);
 }
 
@@ -365,7 +378,7 @@ body {
 .report-header { background: white; padding: 1.25rem 1.5rem; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 .report-header h2 { font-size: 1.3rem; font-weight: 700; color: #1e293b; }
 .report-header h3 { font-size: 1.1rem; font-weight: 700; }
-.sede-highlight { color: #2563eb; }
+.sede-highlight { color: var(--csjv-navy); }
 .report-subtitle { font-size: .85rem; color: #64748b; margin-top: .25rem; }
 
 .summary-cards { display: flex; gap: 1rem; flex-wrap: wrap; }
@@ -380,7 +393,7 @@ body {
   min-width: 130px;
   flex: 1;
 }
-.summary-card.accent { background: #eff6ff; border: 2px solid #bfdbfe; }
+.summary-card.accent { background: var(--csjv-cyan-tint); border: 2px solid #99e0f5; }
 .summary-card.positive { background: #f0fdf4; border: 2px solid #bbf7d0; }
 .summary-card.negative { background: #fef2f2; border: 2px solid #fecaca; }
 .card-label { font-size: .75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: .04em; }
@@ -536,7 +549,7 @@ body {
   text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
   margin-bottom: 1.5rem;
 }
-.db-upload-zone:hover { border-color: #6366f1; background: #f5f3ff; }
+.db-upload-zone:hover { border-color: var(--csjv-cyan); background: var(--csjv-cyan-tint); }
 .db-upload-zone.loading { border-color: #94a3b8; cursor: wait; }
 .db-upload-text { display: flex; flex-direction: column; gap: .4rem; font-size: 1rem; font-weight: 600; color: #334155; }
 .db-upload-hint { font-size: .8rem; font-weight: 400; color: #94a3b8; }
@@ -554,7 +567,7 @@ body {
 .db-table { width: 100%; border-collapse: collapse; }
 .db-table td, .db-table th { padding: .55rem .75rem; }
 
-.db-sede-header { background: #1e293b; color: white; }
+.db-sede-header { background: var(--csjv-navy); color: white; }
 .db-sede-name { font-size: 1rem; font-weight: 700; }
 .db-count-head { font-size: .9rem; font-weight: 600; white-space: nowrap; width: 130px; }
 .db-gender-head { width: 220px; }
@@ -584,8 +597,8 @@ body {
 .db-gender-bar-wrap { display: flex; align-items: center; gap: .5rem; }
 .db-gender-bar { flex: 1; height: 8px; border-radius: 4px; overflow: hidden; background: #e2e8f0; display: flex; }
 .db-bar-girls { background: #ec4899; height: 100%; transition: width .3s; }
-.db-bar-boys { background: #3b82f6; height: 100%; transition: width .3s; }
+.db-bar-boys { background: var(--csjv-cyan); height: 100%; transition: width .3s; }
 .db-gender-labels { display: flex; gap: .5rem; font-size: .78rem; white-space: nowrap; }
 .db-girls { color: #ec4899; font-weight: 600; }
-.db-boys { color: #3b82f6; font-weight: 600; }
+.db-boys { color: var(--csjv-navy); font-weight: 600; }
 .db-success { background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: .75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: .9rem; }

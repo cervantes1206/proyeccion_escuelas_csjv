@@ -1,18 +1,10 @@
 import { aggregateBySchool, grandTotal } from '../utils/projection';
-import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
+import { GRADES_BY_SCHOOL, GRADE_LABELS, SCHOOL_COLORS } from '../data/initialData';
 import { exportGeneralReport } from '../utils/exportExcel';
 import ExportButton from './ExportButton';
 import { lazy, Suspense } from 'react';
 
 const ChartsGeneral = lazy(() => import('./ChartsGeneral'));
-
-const SCHOOL_COLORS = {
-  Preschool: '#7c3aed',
-  Elementary: '#2563eb',
-  Middle: '#059669',
-  'Upper Middle': '#d97706',
-  High: '#dc2626',
-};
 
 export default function GeneralReport({ currentSedes, projectedSedes, currentYear, projectedYear }) {
   const current = aggregateBySchool(currentSedes);

@@ -6,7 +6,7 @@ import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
 import { aggregateBySchool, sedeStats } from '../utils/projection';
 
 const COLOR_CURRENT = '#94a3b8';
-const COLOR_PROJECTED = '#2563eb';
+const COLOR_PROJECTED = '#111c4e';
 
 const tooltipStyle = {
   backgroundColor: 'white',

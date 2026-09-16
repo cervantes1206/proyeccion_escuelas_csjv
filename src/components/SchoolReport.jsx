@@ -1,20 +1,12 @@
 import { lazy, Suspense } from 'react';
 import { aggregateBySchool, genderBySchool } from '../utils/projection';
-import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
+import { GRADES_BY_SCHOOL, GRADE_LABELS, SCHOOL_COLORS } from '../data/initialData';
 import { exportSchoolReport } from '../utils/exportExcel';
 import ExportButton from './ExportButton';
 
 const ChartsSchool = lazy(() => import('./ChartsSchool'));
 
 const SCHOOL_TYPES = ['Preschool', 'Elementary', 'Middle', 'Upper Middle', 'High'];
-
-const SCHOOL_COLORS = {
-  Preschool: '#7c3aed',
-  Elementary: '#2563eb',
-  Middle: '#059669',
-  'Upper Middle': '#d97706',
-  High: '#dc2626',
-};
 
 export default function SchoolReport({ currentSedes, projectedSedes, currentYear, projectedYear }) {
   const current = aggregateBySchool(currentSedes);
@@ -81,7 +73,7 @@ export default function SchoolReport({ currentSedes, projectedSedes, currentYear
                   <tr>
                     <th>Grado</th>
                     <th style={{ color: '#db2777' }}>Niñas</th>
-                    <th style={{ color: '#2563eb' }}>Niños</th>
+                    <th style={{ color: 'var(--csjv-navy)' }}>Niños</th>
                     <th>Total</th>
                     <th>% Niñas</th>
                   </tr>
@@ -94,7 +86,7 @@ export default function SchoolReport({ currentSedes, projectedSedes, currentYear
                       <tr key={grade}>
                         <td className="grade-label">{GRADE_LABELS[grade]}</td>
                         <td style={{ color: '#db2777', fontWeight: 600 }}>{g.girls}</td>
-                        <td style={{ color: '#2563eb', fontWeight: 600 }}>{g.boys}</td>
+                        <td style={{ color: 'var(--csjv-navy)', fontWeight: 600 }}>{g.boys}</td>
                         <td>{tot}</td>
                         <td>{tot > 0 ? ((g.girls / tot) * 100).toFixed(1) + '%' : '—'}</td>
                       </tr>
@@ -105,7 +97,7 @@ export default function SchoolReport({ currentSedes, projectedSedes, currentYear
                   <tr>
                     <td><strong>Total</strong></td>
                     <td style={{ color: '#db2777' }}><strong>{totalGirls}</strong></td>
-                    <td style={{ color: '#2563eb' }}><strong>{totalBoys}</strong></td>
+                    <td style={{ color: 'var(--csjv-navy)' }}><strong>{totalBoys}</strong></td>
                     <td><strong>{totalGirls + totalBoys}</strong></td>
                     <td><strong>{totalGirls + totalBoys > 0 ? ((totalGirls / (totalGirls + totalBoys)) * 100).toFixed(1) + '%' : '—'}</strong></td>
                   </tr>

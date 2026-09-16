@@ -2,19 +2,11 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, LabelList,
 } from 'recharts';
-import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
+import { GRADES_BY_SCHOOL, GRADE_LABELS, SCHOOL_COLORS } from '../data/initialData';
 import { sedeStats, aggregateBySchool, grandTotal } from '../utils/projection';
 
-const SCHOOL_COLORS = {
-  Preschool: '#7c3aed',
-  Elementary: '#2563eb',
-  Middle: '#059669',
-  'Upper Middle': '#d97706',
-  High: '#dc2626',
-};
-
 const COLOR_CURRENT = '#94a3b8';
-const COLOR_PROJECTED = '#2563eb';
+const COLOR_PROJECTED = '#111c4e';
 
 const SCHOOL_ORDER = ['Preschool', 'Elementary', 'Middle', 'Upper Middle', 'High'];
 

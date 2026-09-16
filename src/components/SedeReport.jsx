@@ -1,18 +1,10 @@
 import { sedeStats } from '../utils/projection';
-import { GRADES_BY_SCHOOL, GRADE_LABELS } from '../data/initialData';
+import { GRADES_BY_SCHOOL, GRADE_LABELS, SCHOOL_COLORS } from '../data/initialData';
 import { exportSedeReport } from '../utils/exportExcel';
 import ExportButton from './ExportButton';
 import { lazy, Suspense } from 'react';
 
 const ChartsSede = lazy(() => import('./ChartsSede'));
-
-const SCHOOL_COLORS = {
-  Preschool: '#7c3aed',
-  Elementary: '#2563eb',
-  Middle: '#059669',
-  'Upper Middle': '#d97706',
-  High: '#dc2626',
-};
 
 export default function SedeReport({ currentSede, projectedSede, currentYear, projectedYear }) {
   const current = sedeStats(currentSede);
