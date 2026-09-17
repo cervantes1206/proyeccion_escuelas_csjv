@@ -22,6 +22,9 @@ export default function App() {
   const [reportSedeIdx, setReportSedeIdx] = useState(0);
   const [subjectsBySchool, setSubjectsBySchool] = useState(DEFAULT_SUBJECTS_BY_SCHOOL);
   const [teacherMaxHours, setTeacherMaxHours] = useState(DEFAULT_TEACHER_MAX_HOURS);
+  const [numPeriods, setNumPeriods] = useState(4);
+  const [numWeeks, setNumWeeks] = useState(40);
+  const [teachersRoster, setTeachersRoster] = useState([]);
 
   function setSubjectsForSchool(schoolType, subjects) {
     setSubjectsBySchool((prev) => ({ ...prev, [schoolType]: subjects }));
@@ -232,6 +235,12 @@ export default function App() {
             onChangeSubjects={setSubjectsForSchool}
             teacherMaxHours={teacherMaxHours}
             onChangeMaxHours={setMaxHoursForSchool}
+            numPeriods={numPeriods}
+            onChangeNumPeriods={setNumPeriods}
+            numWeeks={numWeeks}
+            onChangeNumWeeks={setNumWeeks}
+            teachersRoster={teachersRoster}
+            onChangeRoster={setTeachersRoster}
           />
         )}
 

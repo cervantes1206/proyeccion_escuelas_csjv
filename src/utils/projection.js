@@ -119,6 +119,15 @@ export function aggregateBySchool(sedes) {
   return result;
 }
 
+// Total number of groups for a school type, summed across the given
+// sedes (pass a single-sede array to get that sede's own group count).
+export function totalGroupsForSchool(sedes, schoolType) {
+  const bySchool = aggregateBySchool(sedes)[schoolType] || {};
+  return Object.entries(bySchool)
+    .filter(([grade]) => grade !== '_total')
+    .reduce((sum, [, v]) => sum + (v.groups || 0), 0);
+}
+
 // Grand total across everything
 export function grandTotal(sedes) {
   return sedes.reduce((sum, sede) => {
