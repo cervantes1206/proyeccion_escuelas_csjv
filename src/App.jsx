@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { createDefaultSede, MAX_GROUP_SIZE } from './data/initialData';
+import { createDefaultSede, MAX_GROUP_SIZE, DEFAULT_SUBJECTS_BY_SCHOOL, DEFAULT_TEACHER_MAX_HOURS } from './data/initialData';
 import { SEDES_2026 } from './data/sedes2026';
 import { projectSede, grandTotal } from './utils/projection';
 import SedePanel from './components/SedePanel';
@@ -8,6 +8,7 @@ import GeneralReport from './components/GeneralReport';
 import SchoolReport from './components/SchoolReport';
 import ImportButton from './components/ImportButton';
 import Dashboard from './components/Dashboard';
+import TeacherPlanner from './components/TeacherPlanner';
 import './styles/app.css';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -19,6 +20,16 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('entrada');
   const [activeSedeIdx, setActiveSedeIdx] = useState(0);
   const [reportSedeIdx, setReportSedeIdx] = useState(0);
+  const [subjectsBySchool, setSubjectsBySchool] = useState(DEFAULT_SUBJECTS_BY_SCHOOL);
+  const [teacherMaxHours, setTeacherMaxHours] = useState(DEFAULT_TEACHER_MAX_HOURS);
+
+  function setSubjectsForSchool(schoolType, subjects) {
+    setSubjectsBySchool((prev) => ({ ...prev, [schoolType]: subjects }));
+  }
+
+  function setMaxHoursForSchool(schoolType, maxHours) {
+    setTeacherMaxHours((prev) => ({ ...prev, [schoolType]: maxHours }));
+  }
 
   const projectedSedes = useMemo(
     () => sedes.map((sede) => projectSede(sede, newK4BySede[sede.id] || 0)),
@@ -80,6 +91,7 @@ export default function App() {
           { id: 'reporte-sede', label: 'Informe por Sede' },
           { id: 'reporte-escuela', label: 'Informe por Escuela' },
           { id: 'reporte-general', label: 'Informe General' },
+          { id: 'maestros', label: 'Plan de Maestros' },
           { id: 'dashboard', label: 'Dashboard' },
         ].map((tab) => (
           <button
@@ -207,6 +219,19 @@ export default function App() {
             projectedSedes={projectedSedes}
             currentYear={CURRENT_YEAR}
             projectedYear={PROJECTED_YEAR}
+          />
+        )}
+
+        {activeTab === 'maestros' && (
+          <TeacherPlanner
+            currentSedes={sedes}
+            projectedSedes={projectedSedes}
+            currentYear={CURRENT_YEAR}
+            projectedYear={PROJECTED_YEAR}
+            subjectsBySchool={subjectsBySchool}
+            onChangeSubjects={setSubjectsForSchool}
+            teacherMaxHours={teacherMaxHours}
+            onChangeMaxHours={setMaxHoursForSchool}
           />
         )}
 
