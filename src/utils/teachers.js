@@ -156,9 +156,12 @@ export function calculateSchoolTeacherPlan(
 // Horas reales disponibles de un rol para una escuela, a partir del
 // roster de maestros: cada maestro reparte su tope de horas semanales
 // entre todas las escuelas que cubre (un maestro de 24h que cubre 2
-// escuelas aporta 12h a cada una).
-export function availableHoursForSchool(roster, schoolType, role) {
+// escuelas aporta 12h a cada una). sedeId filtra el roster a una sola
+// sede primero (El Retiro, Medellín...) — sin sedeId cuenta a todos,
+// incluyendo a quienes van a ambas sedes.
+export function availableHoursForSchool(roster, schoolType, role, sedeId) {
   return roster
     .filter((t) => t.role === role && (t.schools || []).includes(schoolType))
+    .filter((t) => !sedeId || !t.sedeIds || t.sedeIds.length === 0 || t.sedeIds.includes(sedeId))
     .reduce((sum, t) => sum + (Number(t.maxHours) || 0) / Math.max((t.schools || []).length, 1), 0);
 }

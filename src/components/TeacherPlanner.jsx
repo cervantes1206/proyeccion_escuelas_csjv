@@ -23,6 +23,7 @@ export default function TeacherPlanner({
 }) {
   const [activeSchool, setActiveSchool] = useState(SCHOOL_TYPES[0]);
   const [yearMode, setYearMode] = useState('projected');
+  const [rosterSedeFilter, setRosterSedeFilter] = useState('');
 
   const sedesForMode = yearMode === 'projected' ? projectedSedes : currentSedes;
 
@@ -59,36 +60,46 @@ export default function TeacherPlanner({
   );
 
   const availableHomeroomHours = useMemo(
-    () => availableHoursForSchool(teachersRoster, activeSchool, 'homeroom'),
-    [teachersRoster, activeSchool]
+    () => availableHoursForSchool(teachersRoster, activeSchool, 'homeroom', rosterSedeFilter),
+    [teachersRoster, activeSchool, rosterSedeFilter]
   );
   const availableAreaHours = useMemo(
-    () => availableHoursForSchool(teachersRoster, activeSchool, 'area'),
-    [teachersRoster, activeSchool]
+    () => availableHoursForSchool(teachersRoster, activeSchool, 'area', rosterSedeFilter),
+    [teachersRoster, activeSchool, rosterSedeFilter]
   );
   const homeroomDiffHours = availableHomeroomHours - plan.peakHomeroomHours;
   const areaDiffHours = availableAreaHours - plan.peakAreaHours;
 
-  function updateTeacher(idx, patch) {
-    const next = teachersRoster.map((t, i) => (i === idx ? { ...t, ...patch } : t));
-    onChangeRoster(next);
+  const visibleRoster = useMemo(
+    () => teachersRoster.filter((t) => !rosterSedeFilter || !t.sedeIds || t.sedeIds.length === 0 || t.sedeIds.includes(rosterSedeFilter)),
+    [teachersRoster, rosterSedeFilter]
+  );
+
+  function updateTeacherById(id, patch) {
+    onChangeRoster(teachersRoster.map((t) => (t.id === id ? { ...t, ...patch } : t)));
   }
 
   function addTeacher() {
     onChangeRoster([
       ...teachersRoster,
-      { id: crypto.randomUUID(), name: '', role: 'area', maxHours: 24, schools: [activeSchool] },
+      { id: crypto.randomUUID(), name: '', documento: '', area: '', role: 'area', maxHours: 24, schools: [activeSchool], sedeIds: [] },
     ]);
   }
 
-  function removeTeacher(idx) {
-    onChangeRoster(teachersRoster.filter((_, i) => i !== idx));
+  function removeTeacher(id) {
+    onChangeRoster(teachersRoster.filter((t) => t.id !== id));
   }
 
-  function toggleTeacherSchool(idx, teacher, school) {
+  function toggleTeacherSchool(teacher, school) {
     const current = teacher.schools || [];
     const next = current.includes(school) ? current.filter((s) => s !== school) : [...current, school];
-    updateTeacher(idx, { schools: next });
+    updateTeacherById(teacher.id, { schools: next });
+  }
+
+  function toggleTeacherSede(teacher, sedeId) {
+    const current = teacher.sedeIds || [];
+    const next = current.includes(sedeId) ? current.filter((s) => s !== sedeId) : [...current, sedeId];
+    updateTeacherById(teacher.id, { sedeIds: next });
   }
 
   function updateSubject(idx, patch) {
@@ -120,9 +131,14 @@ export default function TeacherPlanner({
         <div className="report-header-row">
           <div>
             <h2>Plan de Maestros por Horas</h2>
-            <p className="report-subtitle">
-              Horas del área = horas semanales × grupos que la reciben. Mínimo de maestros = esas horas ÷ tope de horas semanales del maestro que la cubre, redondeado hacia abajo — las horas que sobran quedan como "horas pendientes" por resolver (otro maestro, tiempo compartido, etc.), en vez de asumir de una vez un maestro adicional completo. "Redondeado" es esa misma cuenta llevada hacia arriba, para cuando sí se quiere cubrir el 100%. El tope de horas depende de si el área la dicta un director de grupo (HRT) o un maestro de área. Las materias por periodo solo cuentan mientras están activas — el total real es el pico entre periodos.
-            </p>
+            <ul className="formula-rules">
+              <li><span className="formula-name">Horas del área</span><code>horas = horasSemana × grupos</code></li>
+              <li><span className="formula-name">Mínimo de maestros</span><code>mínimo = ⌊horas ÷ tope⌋</code></li>
+              <li><span className="formula-name">Horas pendientes</span><code>pendientes = horas − (mínimo × tope)</code></li>
+              <li><span className="formula-name">Redondeado (100%)</span><code>redondeado = ⌈horas ÷ tope⌉</code></li>
+              <li><span className="formula-name">Tope de horas</span>según si el área la dicta un director de grupo (HRT) o un maestro de área — cada uno con su propio tope semanal.</li>
+              <li><span className="formula-name">Materias por periodo</span>solo cuentan mientras están activas; el total real a contratar es el pico entre periodos, no la suma del año.</li>
+            </ul>
           </div>
           <div className="year-toggle">
             <button
@@ -390,9 +406,31 @@ export default function TeacherPlanner({
 
       <div className="report-header">
         <h2>Roster de Maestros</h2>
-        <p className="report-subtitle">
-          Maestros reales por nombre, rol y las escuelas que cubre. Si un maestro cubre más de una escuela, su tope de horas se reparte entre ellas para calcular cuánto aporta a cada una.
-        </p>
+        <ul className="formula-rules">
+          <li><span className="formula-name">Datos por maestro</span>nombre, documento, área que dicta, rol, horas máx. semanales, escuelas y sedes a las que va.</li>
+          <li><span className="formula-name">Varias escuelas o sedes</span>el tope de horas se reparte entre todas las que cubre: <code>horas aportadas = tope ÷ nº de escuelas</code>.</li>
+          <li><span className="formula-name">Filtro por sede</span>usa el selector para ver solo El Retiro, solo Medellín, o todos (incluye a quienes van a ambas).</li>
+        </ul>
+      </div>
+
+      <div className="entrada-controls teacher-config-row">
+        <div className="k4-control">
+          <label htmlFor="roster-sede-filter">
+            Filtrar por sede
+            <span className="k4-hint">&nbsp;</span>
+          </label>
+          <select
+            id="roster-sede-filter"
+            className="teacher-type-select"
+            value={rosterSedeFilter}
+            onChange={(e) => setRosterSedeFilter(e.target.value)}
+          >
+            <option value="">Todas las sedes</option>
+            {currentSedes.map((sede) => (
+              <option key={sede.id} value={sede.id}>{sede.name}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="teacher-table-scroll">
@@ -400,28 +438,47 @@ export default function TeacherPlanner({
           <thead>
             <tr>
               <th>Nombre</th>
+              <th>Documento</th>
+              <th>Área</th>
               <th>Rol</th>
               <th>Horas máx. semanales</th>
               <th>Escuelas que cubre</th>
+              <th>Sedes a las que va</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {teachersRoster.map((teacher, idx) => (
+            {visibleRoster.map((teacher) => (
               <tr key={teacher.id}>
                 <td>
                   <input
                     className="subject-name-input"
                     value={teacher.name}
                     placeholder="Nombre del maestro"
-                    onChange={(e) => updateTeacher(idx, { name: e.target.value })}
+                    onChange={(e) => updateTeacherById(teacher.id, { name: e.target.value })}
+                  />
+                </td>
+                <td>
+                  <input
+                    className="group-input"
+                    value={teacher.documento || ''}
+                    placeholder="Documento"
+                    onChange={(e) => updateTeacherById(teacher.id, { documento: e.target.value })}
+                  />
+                </td>
+                <td>
+                  <input
+                    className="subject-name-input"
+                    value={teacher.area || ''}
+                    placeholder="Área que dicta"
+                    onChange={(e) => updateTeacherById(teacher.id, { area: e.target.value })}
                   />
                 </td>
                 <td>
                   <select
                     className="teacher-type-select"
                     value={teacher.role === 'homeroom' ? 'homeroom' : 'area'}
-                    onChange={(e) => updateTeacher(idx, { role: e.target.value })}
+                    onChange={(e) => updateTeacherById(teacher.id, { role: e.target.value })}
                   >
                     <option value="homeroom">Director de grupo (HRT)</option>
                     <option value="area">Maestro de área</option>
@@ -434,7 +491,7 @@ export default function TeacherPlanner({
                     step="0.5"
                     className="group-input"
                     value={teacher.maxHours}
-                    onChange={(e) => updateTeacher(idx, { maxHours: Number(e.target.value) || 0 })}
+                    onChange={(e) => updateTeacherById(teacher.id, { maxHours: Number(e.target.value) || 0 })}
                   />
                 </td>
                 <td className="periods-cell">
@@ -444,22 +501,39 @@ export default function TeacherPlanner({
                         key={st}
                         type="button"
                         className={'period-badge' + ((teacher.schools || []).includes(st) ? ' active' : '')}
-                        onClick={() => toggleTeacherSchool(idx, teacher, st)}
+                        onClick={() => toggleTeacherSchool(teacher, st)}
                       >
                         {st}
                       </button>
                     ))}
                   </div>
                 </td>
+                <td className="periods-cell">
+                  <div className="period-badges">
+                    {currentSedes.map((sede) => (
+                      <button
+                        key={sede.id}
+                        type="button"
+                        className={'period-badge' + ((teacher.sedeIds || []).includes(sede.id) ? ' active' : '')}
+                        onClick={() => toggleTeacherSede(teacher, sede.id)}
+                      >
+                        {sede.name}
+                      </button>
+                    ))}
+                    {(teacher.sedeIds || []).length === 0 && <span className="card-note">ambas sedes</span>}
+                  </div>
+                </td>
                 <td>
-                  <button className="btn-remove-group" onClick={() => removeTeacher(idx)} title="Eliminar maestro">✕</button>
+                  <button className="btn-remove-group" onClick={() => removeTeacher(teacher.id)} title="Eliminar maestro">✕</button>
                 </td>
               </tr>
             ))}
-            {teachersRoster.length === 0 && (
+            {visibleRoster.length === 0 && (
               <tr>
-                <td colSpan="5" className="teacher-empty-row">
-                  No hay maestros en el roster. Agrega el primero con "+ Agregar maestro".
+                <td colSpan="8" className="teacher-empty-row">
+                  {teachersRoster.length === 0
+                    ? 'No hay maestros en el roster. Agrega el primero con "+ Agregar maestro".'
+                    : 'Ningún maestro coincide con el filtro de sede seleccionado.'}
                 </td>
               </tr>
             )}
@@ -476,7 +550,10 @@ export default function TeacherPlanner({
           const equivTeachers = Math.abs(Math.round(diff / (cap || 1)));
           return (
             <div key={label} className={'summary-card' + (diff < 0 ? ' negative' : ' positive')}>
-              <span className="card-label">{label} — {activeSchool}</span>
+              <span className="card-label">
+                {label} — {activeSchool}
+                {rosterSedeFilter && ` (${currentSedes.find((s) => s.id === rosterSedeFilter)?.name || ''})`}
+              </span>
               <span className="card-value">
                 {diff < 0 ? '−' : '+'}{equivTeachers} maestro{equivTeachers === 1 ? '' : 's'}
               </span>

@@ -662,3 +662,23 @@ body {
 }
 .period-badge.active { background: var(--csjv-navy); border-color: var(--csjv-navy); color: white; }
 .period-peak-row { background: var(--csjv-cyan-tint); }
+
+.formula-rules { list-style: none; display: flex; flex-direction: column; gap: .4rem; margin-top: .5rem; }
+.formula-rules li {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .5rem;
+  font-size: .85rem;
+  color: #374151;
+  line-height: 1.4;
+}
+.formula-name { font-weight: 700; color: var(--csjv-navy); min-width: 150px; }
+.formula-rules code {
+  background: #f1f5f9;
+  border-radius: 5px;
+  padding: .15rem .5rem;
+  font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size: .82rem;
+  color: #1e293b;
+}
