@@ -29,11 +29,14 @@ export default function TeacherPlanner({
   }, [aggregated, activeSchool]);
 
   const subjects = useMemo(() => subjectsBySchool[activeSchool] || [], [subjectsBySchool, activeSchool]);
-  const maxAreaHours = teacherMaxHours[activeSchool]?.area ?? 24;
+  const maxHours = useMemo(
+    () => teacherMaxHours[activeSchool] || { homeroom: 19.5, area: 24 },
+    [teacherMaxHours, activeSchool]
+  );
 
   const plan = useMemo(
-    () => calculateSchoolTeacherPlan(activeSchool, totalGroups, subjects, maxAreaHours),
-    [activeSchool, totalGroups, subjects, maxAreaHours]
+    () => calculateSchoolTeacherPlan(activeSchool, totalGroups, subjects, maxHours),
+    [activeSchool, totalGroups, subjects, maxHours]
   );
 
   function updateSubject(idx, patch) {
@@ -44,7 +47,7 @@ export default function TeacherPlanner({
   function addSubject() {
     onChangeSubjects(activeSchool, [
       ...subjects,
-      { id: crypto.randomUUID(), name: '', hoursPerWeek: 1, needsAreaTeacher: true },
+      { id: crypto.randomUUID(), name: '', hoursPerWeek: 1, teacherType: 'area' },
     ]);
   }
 
@@ -59,7 +62,7 @@ export default function TeacherPlanner({
           <div>
             <h2>Plan de Maestros por Horas</h2>
             <p className="report-subtitle">
-              Maestros de área necesarios = horas semanales de la materia × grupos de la escuela ÷ horas máximas por maestro (redondeado hacia arriba). Los directores de grupo se cuentan 1 por grupo.
+              Maestros necesarios por área = horas semanales del área × grupos de la escuela ÷ horas máximas semanales del maestro que la cubre (redondeado hacia arriba). El tope de horas depende de si el área la dicta un director de grupo (HRT) o un maestro de área.
             </p>
           </div>
           <div className="year-toggle">
@@ -94,9 +97,24 @@ export default function TeacherPlanner({
 
       <div className="entrada-controls teacher-config-row">
         <div className="k4-control">
+          <label htmlFor="max-homeroom-hours">
+            Horas máx. semanales — director de grupo (HRT)
+            <span className="k4-hint">Grupos proyectados en {activeSchool}: {totalGroups}</span>
+          </label>
+          <input
+            id="max-homeroom-hours"
+            type="number"
+            min="1"
+            step="0.5"
+            className="k4-input"
+            value={maxHours.homeroom ?? ''}
+            onChange={(e) => onChangeMaxHours(activeSchool, { ...maxHours, homeroom: Number(e.target.value) || 0 })}
+          />
+        </div>
+        <div className="k4-control">
           <label htmlFor="max-area-hours">
             Horas máx. semanales — maestro de área
-            <span className="k4-hint">Grupos proyectados en {activeSchool}: {totalGroups}</span>
+            <span className="k4-hint">&nbsp;</span>
           </label>
           <input
             id="max-area-hours"
@@ -104,10 +122,8 @@ export default function TeacherPlanner({
             min="1"
             step="0.5"
             className="k4-input"
-            value={maxAreaHours}
-            onChange={(e) =>
-              onChangeMaxHours(activeSchool, { ...teacherMaxHours[activeSchool], area: Number(e.target.value) || 0 })
-            }
+            value={maxHours.area ?? ''}
+            onChange={(e) => onChangeMaxHours(activeSchool, { ...maxHours, area: Number(e.target.value) || 0 })}
           />
         </div>
       </div>
@@ -118,7 +134,7 @@ export default function TeacherPlanner({
             <tr>
               <th>Materia / Área</th>
               <th>Horas semanales</th>
-              <th>¿Maestro de área dedicado?</th>
+              <th>Tipo de maestro</th>
               <th>Horas totales/semana</th>
               <th>Maestros necesarios</th>
               <th></th>
@@ -146,17 +162,17 @@ export default function TeacherPlanner({
                   />
                 </td>
                 <td>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={row.needsAreaTeacher}
-                      onChange={(e) => updateSubject(idx, { needsAreaTeacher: e.target.checked })}
-                    />
-                    {row.needsAreaTeacher ? 'Sí' : 'No — cubre director de grupo'}
-                  </label>
+                  <select
+                    className="teacher-type-select"
+                    value={row.teacherType === 'homeroom' ? 'homeroom' : 'area'}
+                    onChange={(e) => updateSubject(idx, { teacherType: e.target.value })}
+                  >
+                    <option value="homeroom">Director de grupo (HRT)</option>
+                    <option value="area">Maestro de área</option>
+                  </select>
                 </td>
                 <td>{row.totalHours}</td>
-                <td className="total-cell">{row.needsAreaTeacher ? row.teachers : '—'}</td>
+                <td className="total-cell">{row.teachers}</td>
                 <td>
                   <button className="btn-remove-group" onClick={() => removeSubject(idx)} title="Eliminar materia">✕</button>
                 </td>
@@ -184,6 +200,9 @@ export default function TeacherPlanner({
         <div className="summary-card">
           <span className="card-label">Directores de grupo</span>
           <span className="card-value">{plan.homeroomTeachers}</span>
+          {plan.homeroomFloorApplied && (
+            <span className="card-note">mínimo 1 por grupo ({plan.totalGroups}) — por horas daría menos</span>
+          )}
         </div>
         <div className="summary-card accent">
           <span className="card-label">Maestros de área</span>

@@ -103,21 +103,23 @@ export const INITIAL_SEDES = [
 ];
 
 // ── Plan de maestros por horas ──
-// Máximo de horas/momentos semanales que puede dictar un maestro de área,
-// por escuela. Un director de grupo (homeroom) siempre es 1 por grupo, así
-// que no requiere fórmula — solo el maestro de área se calcula por horas.
-// Fuente del valor por defecto (24h): Informe de empalme Middle School 2026.
+// Tope de horas/momentos semanales que puede dictar cada tipo de maestro,
+// por escuela. La misma fórmula de horas se aplica a ambos tipos — solo
+// cambia el tope: un director de grupo (HRT) tiene menos horas disponibles
+// porque también lidera su grupo; un maestro de área dicta a varios grupos.
+// Fuente de los valores por defecto: Informe de empalme Middle School 2026
+// (HRT 19,5 h/semana, maestro de área 24 h/semana).
 export const DEFAULT_TEACHER_MAX_HOURS = {
-  Preschool: { area: 24 },
-  Elementary: { area: 24 },
-  Middle: { area: 24 },
-  'Upper Middle': { area: 24 },
-  High: { area: 24 },
+  Preschool: { homeroom: 19.5, area: 24 },
+  Elementary: { homeroom: 19.5, area: 24 },
+  Middle: { homeroom: 19.5, area: 24 },
+  'Upper Middle': { homeroom: 19.5, area: 24 },
+  High: { homeroom: 19.5, area: 24 },
 };
 
 // Materias/áreas por escuela con su intensidad semanal (horas o "momentos"
-// por grupo) y si requieren un maestro de área dedicado (si no, se asume
-// que el director de grupo la cubre dentro de su propia carga).
+// por grupo) y el tipo de maestro que la cubre: 'homeroom' (director de
+// grupo / HRT) o 'area' (maestro de área especializado).
 // Middle School viene precargado con el Plan de Estudios 2026 real
 // (Informe de empalme Middle School — 29 momentos semanales); las demás
 // escuelas quedan vacías para configurarlas desde el formulario.
@@ -125,17 +127,17 @@ export const DEFAULT_SUBJECTS_BY_SCHOOL = {
   Preschool: [],
   Elementary: [],
   Middle: [
-    { id: crypto.randomUUID(), name: 'Science', hoursPerWeek: 4, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Ciencias Sociales', hoursPerWeek: 2, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Arts Life Project', hoursPerWeek: 1, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Educación Religiosa', hoursPerWeek: 1, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Educación Ética y en Valores Humanos', hoursPerWeek: 1, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Educación Física', hoursPerWeek: 2, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'English as a Second Language (ESL)', hoursPerWeek: 7, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Lengua Castellana', hoursPerWeek: 4, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Matemáticas', hoursPerWeek: 5, needsAreaTeacher: true },
-    { id: crypto.randomUUID(), name: 'Life Project - Proyecto Vital', hoursPerWeek: 1, needsAreaTeacher: false },
-    { id: crypto.randomUUID(), name: 'School Assembly', hoursPerWeek: 1, needsAreaTeacher: false },
+    { id: crypto.randomUUID(), name: 'Science', hoursPerWeek: 4, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Ciencias Sociales', hoursPerWeek: 2, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Arts Life Project', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Educación Religiosa', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Educación Ética y en Valores Humanos', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Educación Física', hoursPerWeek: 2, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'English as a Second Language (ESL)', hoursPerWeek: 7, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Lengua Castellana', hoursPerWeek: 4, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Matemáticas', hoursPerWeek: 5, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Life Project - Proyecto Vital', hoursPerWeek: 1, teacherType: 'homeroom' },
+    { id: crypto.randomUUID(), name: 'School Assembly', hoursPerWeek: 1, teacherType: 'homeroom' },
   ],
   'Upper Middle': [],
   High: [],
