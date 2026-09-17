@@ -121,7 +121,7 @@ export default function TeacherPlanner({
           <div>
             <h2>Plan de Maestros por Horas</h2>
             <p className="report-subtitle">
-              Maestros necesarios por área = horas semanales del área × grupos que la reciben ÷ horas máximas semanales del maestro que la cubre (redondeado hacia arriba). El tope de horas depende de si el área la dicta un director de grupo (HRT) o un maestro de área. Las materias por periodo solo cuentan mientras están activas — el total real es el pico entre periodos.
+              Horas del área = horas semanales × grupos que la reciben. Mínimo de maestros = esas horas ÷ tope de horas semanales del maestro que la cubre, redondeado hacia abajo — las horas que sobran quedan como "horas pendientes" por resolver (otro maestro, tiempo compartido, etc.), en vez de asumir de una vez un maestro adicional completo. "Redondeado" es esa misma cuenta llevada hacia arriba, para cuando sí se quiere cubrir el 100%. El tope de horas depende de si el área la dicta un director de grupo (HRT) o un maestro de área. Las materias por periodo solo cuentan mientras están activas — el total real es el pico entre periodos.
             </p>
           </div>
           <div className="year-toggle">
@@ -228,7 +228,9 @@ export default function TeacherPlanner({
               <th>Periodos activos</th>
               <th>Horas totales/semana</th>
               <th>Horas anuales</th>
-              <th>Maestros necesarios</th>
+              <th>Mínimo de maestros</th>
+              <th>Horas pendientes</th>
+              <th>Redondeado</th>
               <th></th>
             </tr>
           </thead>
@@ -303,7 +305,9 @@ export default function TeacherPlanner({
                   </td>
                   <td>{row.totalHours}</td>
                   <td>{Math.round(row.annualHours)}</td>
-                  <td className="total-cell">{row.teachers}</td>
+                  <td className="total-cell">{row.minTeachers}</td>
+                  <td>{row.pendingHours > 0 ? `${row.pendingHours.toFixed(1)}h` : '—'}</td>
+                  <td>{row.teachers}</td>
                   <td>
                     <button className="btn-remove-group" onClick={() => removeSubject(idx)} title="Eliminar materia">✕</button>
                   </td>
@@ -312,7 +316,7 @@ export default function TeacherPlanner({
             })}
             {plan.rows.length === 0 && (
               <tr>
-                <td colSpan="9" className="teacher-empty-row">
+                <td colSpan="11" className="teacher-empty-row">
                   No hay materias configuradas para {activeSchool}. Agrega la primera con "+ Agregar materia".
                 </td>
               </tr>
@@ -320,7 +324,7 @@ export default function TeacherPlanner({
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan="5"><strong>Total horas semanales configuradas</strong></td>
+              <td colSpan="7"><strong>Total horas semanales configuradas</strong></td>
               <td colSpan="4"><strong>{plan.totalHoursConfigured}</strong></td>
             </tr>
           </tfoot>
@@ -364,13 +368,23 @@ export default function TeacherPlanner({
           )}
         </div>
         <div className="summary-card accent">
-          <span className="card-label">Maestros de área (pico)</span>
+          <span className="card-label">Maestros de área — redondeado (pico)</span>
           <span className="card-value">{plan.areaTeachers}</span>
           {numPeriods > 1 && <span className="card-note">periodo {plan.peakAreaPeriod} es el más cargado</span>}
         </div>
         <div className="summary-card positive">
           <span className="card-label">Total maestros — {activeSchool}</span>
           <span className="card-value">{plan.totalTeachers}</span>
+        </div>
+        <div className="summary-card">
+          <span className="card-label">Mínimo de maestros de área</span>
+          <span className="card-value">{plan.areaMinTeachers}</span>
+          <span className="card-note">+ {plan.areaPendingHours.toFixed(1)}h pendientes sin cubrir</span>
+        </div>
+        <div className="summary-card">
+          <span className="card-label">Mínimo de directores de grupo</span>
+          <span className="card-value">{plan.homeroomMinTeachers}</span>
+          <span className="card-note">+ {plan.homeroomPendingHours.toFixed(1)}h pendientes (antes del mínimo de 1 por grupo)</span>
         </div>
       </div>
 

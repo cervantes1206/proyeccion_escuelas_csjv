@@ -39,10 +39,9 @@ export function maxHoursForSubject(subject, maxHours) {
   return Number(maxHours?.[type]) || 0;
 }
 
-// Paso 3: maestros necesarios para un área, mientras está activa = horas
-// totales del área ÷ tope de horas semanales del tipo de maestro que la
-// cubre (redondeado hacia arriba). La misma fórmula aplica a HRT y a
-// maestro de área — solo cambia el tope de horas de cada uno.
+// Paso 3 (redondeado hacia arriba): maestros necesarios para cubrir el
+// 100% del área = horas totales ÷ tope de horas del tipo de maestro que
+// la cubre, redondeado hacia arriba.
 export function teachersNeededForSubject(subject, groups, maxHours) {
   const hours = subjectHoursNeeded(subject, groups);
   const cap = maxHoursForSubject(subject, maxHours);
@@ -50,24 +49,39 @@ export function teachersNeededForSubject(subject, groups, maxHours) {
   return Math.ceil(hours / cap);
 }
 
-function hoursByType(rows, type) {
-  return rows
-    .filter((r) => (r.teacherType === 'homeroom') === (type === 'homeroom'))
-    .reduce((sum, r) => sum + r.totalHours, 0);
+// Mínimo de maestros de tiempo completo que el área garantiza (horas
+// totales ÷ tope, redondeado hacia abajo) — a diferencia del redondeo
+// hacia arriba, no asume que el resto se cubre con un maestro adicional
+// completo; ese resto queda como "horas pendientes" para resolver aparte
+// (otro maestro a tiempo parcial, horas compartidas, etc).
+export function minTeachersForSubject(subject, groups, maxHours) {
+  const hours = subjectHoursNeeded(subject, groups);
+  const cap = maxHoursForSubject(subject, maxHours);
+  if (hours <= 0 || !cap) return 0;
+  return Math.floor(hours / cap);
 }
 
-function teachersByType(rows, type) {
-  return rows
-    .filter((r) => (r.teacherType === 'homeroom') === (type === 'homeroom'))
-    .reduce((sum, r) => sum + r.teachers, 0);
+// Horas que quedan sin cubrir después del mínimo de maestros de tiempo
+// completo (horas totales − mínimo × tope).
+export function pendingHoursForSubject(subject, groups, maxHours) {
+  const hours = subjectHoursNeeded(subject, groups);
+  const cap = maxHoursForSubject(subject, maxHours);
+  if (!cap) return hours;
+  return hours - minTeachersForSubject(subject, groups, maxHours) * cap;
 }
 
-// Plan completo de maestros para una escuela: desglose por área (horas y
-// maestros que necesita mientras está activa), el detalle por periodo
-// (qué materias corren en cada uno y cuántos maestros hacen falta
-// simultáneamente) y el total real a contratar — el pico entre periodos,
-// porque una materia que solo corre en 1-2 periodos no necesita maestro
-// dedicado en los periodos en que no está activa.
+function sumByType(rows, type, field) {
+  return rows
+    .filter((r) => (r.teacherType === 'homeroom') === (type === 'homeroom'))
+    .reduce((sum, r) => sum + r[field], 0);
+}
+
+// Plan completo de maestros para una escuela: desglose por área (horas,
+// mínimo de maestros de tiempo completo y horas pendientes, mientras el
+// área está activa), el detalle por periodo y el total real a
+// contratar — el pico entre periodos, porque una materia que solo corre
+// en 1-2 periodos no necesita maestro dedicado en los periodos en que no
+// está activa.
 export function calculateSchoolTeacherPlan(
   schoolType,
   totalGroups,
@@ -87,23 +101,25 @@ export function calculateSchoolTeacherPlan(
       totalHours: subjectHoursNeeded(subject, groups),
       annualHours: annualHoursForSubject(subject, groups, weeksPerYear || 40, numPeriods),
       teachers: teachersNeededForSubject(subject, groups, maxHours),
+      minTeachers: minTeachersForSubject(subject, groups, maxHours),
+      pendingHours: pendingHoursForSubject(subject, groups, maxHours),
     };
   });
 
   const periods = Array.from({ length: numPeriods || 1 }, (_, i) => i + 1).map((period) => {
     const activeRows = rows.filter((r) => isActiveInPeriod(r, period));
-    const homeroomHours = hoursByType(activeRows, 'homeroom');
-    const areaHours = hoursByType(activeRows, 'area');
-    const homeroomByHours = teachersByType(activeRows, 'homeroom');
-    const areaTeachers = teachersByType(activeRows, 'area');
     return {
       period,
       totalHours: activeRows.reduce((s, r) => s + r.totalHours, 0),
-      homeroomHours,
-      areaHours,
-      homeroomByHours,
-      homeroomTeachers: Math.max(homeroomByHours, totalGroups),
-      areaTeachers,
+      homeroomHours: sumByType(activeRows, 'homeroom', 'totalHours'),
+      areaHours: sumByType(activeRows, 'area', 'totalHours'),
+      homeroomByHours: sumByType(activeRows, 'homeroom', 'teachers'),
+      homeroomTeachers: Math.max(sumByType(activeRows, 'homeroom', 'teachers'), totalGroups),
+      areaTeachers: sumByType(activeRows, 'area', 'teachers'),
+      homeroomMinTeachers: sumByType(activeRows, 'homeroom', 'minTeachers'),
+      homeroomPendingHours: sumByType(activeRows, 'homeroom', 'pendingHours'),
+      areaMinTeachers: sumByType(activeRows, 'area', 'minTeachers'),
+      areaPendingHours: sumByType(activeRows, 'area', 'pendingHours'),
     };
   });
 
@@ -124,6 +140,10 @@ export function calculateSchoolTeacherPlan(
     peakAreaPeriod: peakAreaPeriod.period,
     homeroomTeachers,
     homeroomFloorApplied,
+    homeroomMinTeachers: peakHomeroomPeriod.homeroomMinTeachers,
+    homeroomPendingHours: peakHomeroomPeriod.homeroomPendingHours,
+    areaMinTeachers: peakAreaPeriod.areaMinTeachers,
+    areaPendingHours: peakAreaPeriod.areaPendingHours,
     // Horas equivalentes en el pico, para comparar contra el roster real.
     peakHomeroomHours: homeroomTeachers * (Number(maxHours?.homeroom) || 0),
     peakAreaHours: peakAreaPeriod.areaHours,
