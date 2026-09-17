@@ -22,8 +22,11 @@ export default function App() {
   const [reportSedeIdx, setReportSedeIdx] = useState(0);
   const [subjectsBySchool, setSubjectsBySchool] = useState(DEFAULT_SUBJECTS_BY_SCHOOL);
   const [teacherMaxHours, setTeacherMaxHours] = useState(DEFAULT_TEACHER_MAX_HOURS);
-  const [numPeriods, setNumPeriods] = useState(4);
-  const [numWeeks, setNumWeeks] = useState(40);
+  // Nº de periodos y semanas puede cambiar de un año a otro (ej. 2026
+  // tiene 4 periodos, 2027 pasa a 3) — se maneja por año, no como un
+  // solo valor global.
+  const [numPeriodsByYear, setNumPeriodsByYear] = useState({ current: 4, projected: 4 });
+  const [numWeeksByYear, setNumWeeksByYear] = useState({ current: 40, projected: 40 });
   const [teachersRoster, setTeachersRoster] = useState([]);
 
   function setSubjectsForSchool(schoolType, subjects) {
@@ -32,6 +35,14 @@ export default function App() {
 
   function setMaxHoursForSchool(schoolType, maxHours) {
     setTeacherMaxHours((prev) => ({ ...prev, [schoolType]: maxHours }));
+  }
+
+  function setNumPeriodsForYear(yearMode, value) {
+    setNumPeriodsByYear((prev) => ({ ...prev, [yearMode]: value }));
+  }
+
+  function setNumWeeksForYear(yearMode, value) {
+    setNumWeeksByYear((prev) => ({ ...prev, [yearMode]: value }));
   }
 
   const projectedSedes = useMemo(
@@ -235,10 +246,10 @@ export default function App() {
             onChangeSubjects={setSubjectsForSchool}
             teacherMaxHours={teacherMaxHours}
             onChangeMaxHours={setMaxHoursForSchool}
-            numPeriods={numPeriods}
-            onChangeNumPeriods={setNumPeriods}
-            numWeeks={numWeeks}
-            onChangeNumWeeks={setNumWeeks}
+            numPeriodsByYear={numPeriodsByYear}
+            onChangeNumPeriods={setNumPeriodsForYear}
+            numWeeksByYear={numWeeksByYear}
+            onChangeNumWeeks={setNumWeeksForYear}
             teachersRoster={teachersRoster}
             onChangeRoster={setTeachersRoster}
           />

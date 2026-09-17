@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { GRADES_BY_SCHOOL, SCHOOL_COLORS } from '../data/initialData';
 import { totalGroupsForSchool } from '../utils/projection';
-import { calculateSchoolTeacherPlan, availableHoursForSchool } from '../utils/teachers';
+import { calculateSchoolTeacherPlan, availableHoursForSchool, teachingHoursForTeacher, GROUP_DIRECTOR_DUTY_HOURS } from '../utils/teachers';
 
 const SCHOOL_TYPES = Object.keys(GRADES_BY_SCHOOL);
 
@@ -14,9 +14,9 @@ export default function TeacherPlanner({
   onChangeSubjects,
   teacherMaxHours,
   onChangeMaxHours,
-  numPeriods,
+  numPeriodsByYear,
   onChangeNumPeriods,
-  numWeeks,
+  numWeeksByYear,
   onChangeNumWeeks,
   teachersRoster,
   onChangeRoster,
@@ -26,6 +26,8 @@ export default function TeacherPlanner({
   const [rosterSedeFilter, setRosterSedeFilter] = useState('');
 
   const sedesForMode = yearMode === 'projected' ? projectedSedes : currentSedes;
+  const numPeriods = numPeriodsByYear[yearMode];
+  const numWeeks = numWeeksByYear[yearMode];
 
   const totalGroups = useMemo(
     () => totalGroupsForSchool(sedesForMode, activeSchool),
@@ -82,7 +84,7 @@ export default function TeacherPlanner({
   function addTeacher() {
     onChangeRoster([
       ...teachersRoster,
-      { id: crypto.randomUUID(), name: '', documento: '', area: '', role: 'area', maxHours: 24, schools: [activeSchool], sedeIds: [] },
+      { id: crypto.randomUUID(), name: '', documento: '', area: '', role: 'area', groupDirector: false, maxHours: 24, schools: [activeSchool], sedeIds: [] },
     ]);
   }
 
@@ -173,7 +175,7 @@ export default function TeacherPlanner({
       <div className="entrada-controls teacher-config-row">
         <div className="k4-control">
           <label htmlFor="num-periods">
-            Nº de periodos académicos
+            Nº de periodos académicos — {yearMode === 'projected' ? projectedYear : currentYear}
             <span className="k4-hint">Grupos proyectados en {activeSchool}: {totalGroups}</span>
           </label>
           <input
@@ -183,12 +185,12 @@ export default function TeacherPlanner({
             max="12"
             className="k4-input"
             value={numPeriods}
-            onChange={(e) => onChangeNumPeriods(Math.max(1, Number(e.target.value) || 1))}
+            onChange={(e) => onChangeNumPeriods(yearMode, Math.max(1, Number(e.target.value) || 1))}
           />
         </div>
         <div className="k4-control">
           <label htmlFor="num-weeks">
-            Nº de semanas del año escolar
+            Nº de semanas del año escolar — {yearMode === 'projected' ? projectedYear : currentYear}
             <span className="k4-hint">&nbsp;</span>
           </label>
           <input
@@ -198,7 +200,7 @@ export default function TeacherPlanner({
             max="52"
             className="k4-input"
             value={numWeeks}
-            onChange={(e) => onChangeNumWeeks(Math.max(1, Number(e.target.value) || 1))}
+            onChange={(e) => onChangeNumWeeks(yearMode, Math.max(1, Number(e.target.value) || 1))}
           />
         </div>
         <div className="k4-control">
@@ -409,6 +411,7 @@ export default function TeacherPlanner({
         <ul className="formula-rules">
           <li><span className="formula-name">Datos por maestro</span>nombre, documento, área que dicta, rol, horas máx. semanales, escuelas y sedes a las que va.</li>
           <li><span className="formula-name">Varias escuelas o sedes</span>el tope de horas se reparte entre todas las que cubre: <code>horas aportadas = tope ÷ nº de escuelas</code>.</li>
+          <li><span className="formula-name">Director de grupo</span>si un maestro de área también dirige uno de sus grupos, se le reservan {GROUP_DIRECTOR_DUTY_HOURS}h de coordinación: <code>horas de enseñanza = tope − {GROUP_DIRECTOR_DUTY_HOURS}</code>.</li>
           <li><span className="formula-name">Filtro por sede</span>usa el selector para ver solo El Retiro, solo Medellín, o todos (incluye a quienes van a ambas).</li>
         </ul>
       </div>
@@ -441,6 +444,7 @@ export default function TeacherPlanner({
               <th>Documento</th>
               <th>Área</th>
               <th>Rol</th>
+              <th>¿Director de grupo?</th>
               <th>Horas máx. semanales</th>
               <th>Escuelas que cubre</th>
               <th>Sedes a las que va</th>
@@ -485,6 +489,20 @@ export default function TeacherPlanner({
                   </select>
                 </td>
                 <td>
+                  {teacher.role === 'area' ? (
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={!!teacher.groupDirector}
+                        onChange={(e) => updateTeacherById(teacher.id, { groupDirector: e.target.checked })}
+                      />
+                      +{GROUP_DIRECTOR_DUTY_HOURS}h coordinación
+                    </label>
+                  ) : (
+                    <span className="card-note">no aplica</span>
+                  )}
+                </td>
+                <td>
                   <input
                     type="number"
                     min="0"
@@ -493,6 +511,9 @@ export default function TeacherPlanner({
                     value={teacher.maxHours}
                     onChange={(e) => updateTeacherById(teacher.id, { maxHours: Number(e.target.value) || 0 })}
                   />
+                  {teacher.role === 'area' && teacher.groupDirector && (
+                    <div className="card-note">{teachingHoursForTeacher(teacher)}h reales de enseñanza</div>
+                  )}
                 </td>
                 <td className="periods-cell">
                   <div className="period-badges">
@@ -530,7 +551,7 @@ export default function TeacherPlanner({
             ))}
             {visibleRoster.length === 0 && (
               <tr>
-                <td colSpan="8" className="teacher-empty-row">
+                <td colSpan="9" className="teacher-empty-row">
                   {teachersRoster.length === 0
                     ? 'No hay maestros en el roster. Agrega el primero con "+ Agregar maestro".'
                     : 'Ningún maestro coincide con el filtro de sede seleccionado.'}

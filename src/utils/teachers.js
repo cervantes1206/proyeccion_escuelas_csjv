@@ -153,15 +153,36 @@ export function calculateSchoolTeacherPlan(
   };
 }
 
+// Horas de coordinación de grupo que consume un maestro de área que
+// además es director de grupo (DG/HRT) de uno de sus grupos — quedan
+// reservadas para esa función y no cuentan como horas de enseñanza de
+// área. Fuente: Asignación Académica 2026 Middle — el patrón se repite
+// igual en Science, ESL, Sociales, Lengua Castellana y Matemáticas
+// (TOTAL = horas de área + 1,5h exactas, solo cuando el maestro tiene
+// grupo asignado en la columna DG/HRT).
+export const GROUP_DIRECTOR_DUTY_HOURS = 1.5;
+
+// Horas semanales de un maestro que realmente quedan para dictar su
+// área — su tope, menos las horas de coordinación si además es
+// director de grupo de uno de sus grupos.
+export function teachingHoursForTeacher(teacher) {
+  const hours = Number(teacher.maxHours) || 0;
+  if (teacher.role === 'area' && teacher.groupDirector) {
+    return Math.max(hours - GROUP_DIRECTOR_DUTY_HOURS, 0);
+  }
+  return hours;
+}
+
 // Horas reales disponibles de un rol para una escuela, a partir del
-// roster de maestros: cada maestro reparte su tope de horas semanales
-// entre todas las escuelas que cubre (un maestro de 24h que cubre 2
-// escuelas aporta 12h a cada una). sedeId filtra el roster a una sola
-// sede primero (El Retiro, Medellín...) — sin sedeId cuenta a todos,
-// incluyendo a quienes van a ambas sedes.
+// roster de maestros: cada maestro reparte sus horas de enseñanza entre
+// todas las escuelas que cubre (un maestro de 24h que cubre 2 escuelas
+// aporta 12h a cada una; si además es director de grupo, reparte 22,5h
+// — 24 menos la coordinación de grupo). sedeId filtra el roster a una
+// sola sede primero (El Retiro, Medellín...) — sin sedeId cuenta a
+// todos, incluyendo a quienes van a ambas sedes.
 export function availableHoursForSchool(roster, schoolType, role, sedeId) {
   return roster
     .filter((t) => t.role === role && (t.schools || []).includes(schoolType))
     .filter((t) => !sedeId || !t.sedeIds || t.sedeIds.length === 0 || t.sedeIds.includes(sedeId))
-    .reduce((sum, t) => sum + (Number(t.maxHours) || 0) / Math.max((t.schools || []).length, 1), 0);
+    .reduce((sum, t) => sum + teachingHoursForTeacher(t) / Math.max((t.schools || []).length, 1), 0);
 }
