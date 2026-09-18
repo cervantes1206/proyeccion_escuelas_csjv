@@ -1,9 +1,16 @@
 // Datos reales 2026 importados desde BD_ESTUDIANTES_2026.xlsx
 // 2 sedes · 3574 estudiantes
 
+// IDs fijos (no crypto.randomUUID()) para estas dos sedes reales, porque
+// el roster de maestros (initialData.js) necesita referenciarlas de forma
+// estable entre sesiones. Una sede agregada manualmente sí usa un id
+// aleatorio (ver createDefaultSede en initialData.js).
+export const SEDE_EL_RETIRO_ID = 'sede-el-retiro-2026';
+export const SEDE_MEDELLIN_ID = 'sede-medellin-2026';
+
 export const SEDES_2026 = [
   {
-    id: crypto.randomUUID(),
+    id: SEDE_EL_RETIRO_ID,
     name: 'El Retiro',
     schools: [
       {
@@ -112,7 +119,7 @@ export const SEDES_2026 = [
     ],
   },
   {
-    id: crypto.randomUUID(),
+    id: SEDE_MEDELLIN_ID,
     name: 'Medellín',
     schools: [
       {

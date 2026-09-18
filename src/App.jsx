@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { createDefaultSede, MAX_GROUP_SIZE, DEFAULT_SUBJECTS_BY_SCHOOL, DEFAULT_TEACHER_MAX_HOURS } from './data/initialData';
+import { createDefaultSede, MAX_GROUP_SIZE, DEFAULT_SUBJECTS_BY_SCHOOL, DEFAULT_TEACHER_MAX_HOURS, DEFAULT_TEACHERS_ROSTER } from './data/initialData';
 import { SEDES_2026 } from './data/sedes2026';
 import { projectSede, grandTotal } from './utils/projection';
 import SedePanel from './components/SedePanel';
@@ -27,7 +27,7 @@ export default function App() {
   // solo valor global.
   const [numPeriodsByYear, setNumPeriodsByYear] = useState({ current: 4, projected: 4 });
   const [numWeeksByYear, setNumWeeksByYear] = useState({ current: 40, projected: 40 });
-  const [teachersRoster, setTeachersRoster] = useState([]);
+  const [teachersRoster, setTeachersRoster] = useState(DEFAULT_TEACHERS_ROSTER);
 
   function setSubjectsForSchool(schoolType, subjects) {
     setSubjectsBySchool((prev) => ({ ...prev, [schoolType]: subjects }));

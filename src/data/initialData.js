@@ -1,3 +1,5 @@
+import { SEDE_EL_RETIRO_ID, SEDE_MEDELLIN_ID } from './sedes2026';
+
 // School structure: Preschool → Elementary → Middle → Upper Middle → High
 export const SCHOOL_TYPES = {
   PRESCHOOL: 'Preschool',
@@ -142,3 +144,71 @@ export const DEFAULT_SUBJECTS_BY_SCHOOL = {
   'Upper Middle': [],
   High: [],
 };
+
+// Roster real de Middle y Upper Middle, tomado de "Asignación Académica
+// 2026 Middle.xlsx" (hojas ÁREAS MID-UPPER, LENGUA MID-UPPER OFICIAL,
+// MATEMÁTICAS MID-UPPER). Confirma que Middle y Upper Middle comparten el
+// mismo pool de maestros de área — por eso casi todos cubren ambas escuelas.
+// Para Lengua Castellana, cuyo horario cambia por periodo, se tomó el primer
+// bloque de periodo (P1 / P1 y P2) de cada sede como referencia.
+export const DEFAULT_TEACHERS_ROSTER = [
+  { id: crypto.randomUUID(), name: 'Paula Ruiz Acevedo', documento: '32106035', area: 'Science', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Claudia Salazar', documento: '1128456182', area: 'Science', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Lorena Cárdenas', documento: '', area: 'Science', role: 'area', groupDirector: true, maxHours: 21.5, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Estefanía Arredondo Ferrer', documento: '', area: 'Science', role: 'area', groupDirector: false, maxHours: 24.0, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Luisa Maya', documento: '', area: 'Science', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Jenny Mejía Gil', documento: '21394126', area: 'Science', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Lina Ruiz', documento: '1152457005', area: 'Science', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Mateo Arboleda', documento: '', area: 'Science', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Julian Londoño', documento: '1035223629', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Isabel Cristina Gómez', documento: '43260352', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Sebastian Montaño', documento: '1152220952', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Gabriela Bautista', documento: '', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Gustavo Sanchez Cano', documento: '1037574961', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Juan Sebastián Arango', documento: '1017150303', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Elkin Villa', documento: '98543607', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Sarah Schneider', documento: '', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 13.5, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Gabriel Rios', documento: '', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Laura Gallego', documento: '1026155692', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Sara Restrepo', documento: '1017164951', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juan David Aguirre', documento: '', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: true, maxHours: 13.5, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Valentina López', documento: '', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: false, maxHours: 24.0, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juanita Correa', documento: '', area: 'English as a Second Language (ESL)', role: 'area', groupDirector: false, maxHours: 6.0, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Armando Zapata', documento: '', area: 'Ciencias Sociales', role: 'area', groupDirector: false, maxHours: 8.0, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Claudia Castañeda', documento: '', area: 'Ciencias Sociales', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Ana Maria Velasquez', documento: '', area: 'Ciencias Sociales', role: 'area', groupDirector: true, maxHours: 21.5, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Armando Zapata', documento: '', area: 'Ciencias Sociales', role: 'area', groupDirector: false, maxHours: 14.0, schools: ['Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Hector Zuleta', documento: '', area: 'Ciencias Sociales', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Sindy Orozco', documento: '', area: 'Meaningful Change', role: 'area', groupDirector: false, maxHours: 10.0, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Juan Manuel Escobar', documento: '', area: 'Meaningful Change', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Leidy Espinosa', documento: '', area: 'Meaningful Change', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Sindy Orozco', documento: '', area: 'Meaningful Change', role: 'area', groupDirector: false, maxHours: 9.0, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juan Carlos Muñoz', documento: '', area: 'Meaningful Change', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juan Camilo Gaviria', documento: '', area: 'Meaningful Change', role: 'area', groupDirector: false, maxHours: 7.0, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Paola Arias', documento: '', area: 'Educación Física', role: 'area', groupDirector: false, maxHours: 16.0, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Sara Cardona', documento: '', area: 'Educación Física', role: 'area', groupDirector: false, maxHours: 16.0, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Sebastián Arias', documento: '', area: 'Educación Física', role: 'area', groupDirector: false, maxHours: 10.0, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Fredy Florez', documento: '', area: 'Educación Física', role: 'area', groupDirector: false, maxHours: 21.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Julian Arango', documento: '', area: 'Educación Física', role: 'area', groupDirector: true, maxHours: 16.0, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juan Camilo Agudelo', documento: '', area: 'Talent Road Map', role: 'area', groupDirector: false, maxHours: 23.0, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Diana Rivera', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Gabriela Gutierrez', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: false, maxHours: 22.0, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Daniel Orrego', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Bibiana Ocampo', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Maria Élida Barrientos', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: false, maxHours: 22.0, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Juan Carlos Tafur', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: false, maxHours: 14.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Maribel Vera', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: false, maxHours: 21.5, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Anny Lopez', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: false, maxHours: 21.5, schools: ['Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juanita Correa', documento: '', area: 'Lengua Castellana', role: 'area', groupDirector: false, maxHours: 13.0, schools: ['Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Maria Eugenia Hincapie', documento: '', area: 'Matemáticas', role: 'area', groupDirector: false, maxHours: 20.0, schools: ['Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Pedro Monsalve Marín', documento: '', area: 'Matemáticas', role: 'area', groupDirector: false, maxHours: 20.0, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Paola Balvin', documento: '', area: 'Matemáticas', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Mauricio Aristizabal', documento: '', area: 'Matemáticas', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'John Suaza Muñoz', documento: '', area: 'Matemáticas', role: 'area', groupDirector: true, maxHours: 19.5, schools: ['Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Nancy Chica', documento: '', area: 'Matemáticas', role: 'area', groupDirector: false, maxHours: 21.0, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_MEDELLIN_ID] },
+  { id: crypto.randomUUID(), name: 'Angelo Oquendo', documento: '', area: 'Matemáticas', role: 'area', groupDirector: false, maxHours: 24.0, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Diana Uribe', documento: '', area: 'Matemáticas', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Arbey Ocampo', documento: '', area: 'Matemáticas', role: 'area', groupDirector: true, maxHours: 17.5, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juan David Muller', documento: '', area: 'Matemáticas', role: 'area', groupDirector: false, maxHours: 24.0, schools: ['Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+  { id: crypto.randomUUID(), name: 'Juan Camilo Agudelo', documento: '', area: 'Talent Road Map', role: 'area', groupDirector: false, maxHours: 16.0, schools: ['Middle', 'Upper Middle'], sedeIds: [SEDE_EL_RETIRO_ID] },
+];
