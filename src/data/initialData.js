@@ -141,7 +141,32 @@ export const DEFAULT_SUBJECTS_BY_SCHOOL = {
     { id: crypto.randomUUID(), name: 'Life Project - Proyecto Vital', hoursPerWeek: 1, teacherType: 'homeroom' },
     { id: crypto.randomUUID(), name: 'School Assembly', hoursPerWeek: 1, teacherType: 'homeroom' },
   ],
-  'Upper Middle': [],
+  // Confirmado en Asignación Académica 2026 Middle.xlsx (mismas hojas del
+  // roster): Science, Ciencias Sociales, Educación Física, Lengua
+  // Castellana y Matemáticas mantienen la misma intensidad semanal que en
+  // Middle — ESL en cambio es de 6h, no 7h, en Upper Middle. Arts Life
+  // Project, Educación Religiosa, Ética, Proyecto Vital y School Assembly
+  // no aparecen en ese archivo (no llevan maestro de área dedicado ahí) —
+  // se replican iguales a Middle como punto de partida, sin confirmar.
+  'Upper Middle': [
+    { id: crypto.randomUUID(), name: 'Science', hoursPerWeek: 4, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Ciencias Sociales', hoursPerWeek: 2, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Arts Life Project', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Educación Religiosa', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Educación Ética y en Valores Humanos', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Educación Física', hoursPerWeek: 2, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'English as a Second Language (ESL)', hoursPerWeek: 6, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Lengua Castellana', hoursPerWeek: 4, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Matemáticas', hoursPerWeek: 5, teacherType: 'area' },
+    // Estas dos sí aparecen con maestro de área dedicado en el Excel para
+    // Upper Middle (1h/grupo cada una) — no estaban en el plan de Middle
+    // porque el informe de esa escuela las trata como transversales sin
+    // hora propia, pero aquí sí se ve horas reales asignadas.
+    { id: crypto.randomUUID(), name: 'Meaningful Change', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Talent Road Map', hoursPerWeek: 1, teacherType: 'area' },
+    { id: crypto.randomUUID(), name: 'Life Project - Proyecto Vital', hoursPerWeek: 1, teacherType: 'homeroom' },
+    { id: crypto.randomUUID(), name: 'School Assembly', hoursPerWeek: 1, teacherType: 'homeroom' },
+  ],
   High: [],
 };
 
